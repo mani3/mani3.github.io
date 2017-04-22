@@ -5,16 +5,10 @@ from __future__ import unicode_literals
 AUTHOR = u'mani3'
 SITENAME = u'Lavieleaf'
 SITEURL = ''
-THEME = 'pelican-bootstrap3'
-#DIRECT_TEMPLATES = (('index', 'archives', '404'))
+SITESUBTITLE = 'おもったことをなんでも書くことろ'
 
-BOOTSTRAP_THEME = 'sandstone'
-#PLUGIN_PATHS = ['./pelican-plugins']
-#PLUGINS = ['assets']
-
-BS3_URL = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'
-BS3_JS  = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'
-BS3_THEME = 'http://bootswatch.com/slate/bootstrap.min.css'
+THEME = 'pelican-alchemy/alchemy'
+PYGMENTS_STYLE = 'paraiso-dark'
 
 PATH = 'content'
 
