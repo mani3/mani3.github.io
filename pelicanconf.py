@@ -66,3 +66,5 @@ EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
     'extra/favicon.ico': {'path': 'favicon.ico'}
 }
+
+GOOGLE_ANALYTICS = 'UA-26392156-5'
