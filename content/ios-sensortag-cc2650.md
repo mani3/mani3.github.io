@@ -1,7 +1,7 @@
 title: [iOS] SensorTag CC2650 をさってみた
 Date: 2017-10-18 22:02:13
 Modified: 2017-10-18 22:02:13
-Category: ios
+Category: development
 Tags: ios
 Slug: ios-sensortag-cc2650
 Summary: iOS から SensorTag CC2650 をさわってみたのでメモ
