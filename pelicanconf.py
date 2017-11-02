@@ -34,26 +34,32 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Blogroll
-#LINKS = (('Pelican', 'http://getpelican.com/'),
+# LINKS = (('Pelican', 'http://getpelican.com/'),
 #         ('Python.org', 'http://python.org/'),
 #         ('Jinja2', 'http://jinja.pocoo.org/'),
 #         ('You can modify those links in your config file', '#'),)
 
 # Social widget
-SOCIAL = (('github', 'http://github.com/mani3'),)
+SOCIAL = (
+    ('github', 'http://github.com/mani3'),
+)
 
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+# RELATIVE_URLS = True
 
 AUTHORS = {
     u'mani3': '/about.html',
 }
 
+ICONS = (
+    ('github', 'https://github.com/mani3'),
+)
+
 DATE_FORMATS = {
-    'en': ('en_US','%a, %d %b %Y'),
-    'jp': ('ja_JP','%Y-%m-%d(%a)'),
+    'en': ('en_US', '%a, %d %b %Y'),
+    'jp': ('ja_JP', '%Y-%m-%d(%a)'),
 }
 
 STATIC_PATHS = [
