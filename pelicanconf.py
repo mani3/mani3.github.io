@@ -53,9 +53,9 @@ AUTHORS = {
     u'mani3': '/about.html',
 }
 
-# ICONS = (
-#     ('github', 'https://github.com/mani3'),
-# )
+ICONS = (
+    ('github', 'https://github.com/mani3'),
+)
 
 DATE_FORMATS = {
     'en': ('en_US', '%a, %d %b %Y'),
