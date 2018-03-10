@@ -1,6 +1,16 @@
 
 
 ```
+/// pelican 用の環境
+$ pyenv versions
+  system
+* 3.6.4
+
+/// 必要なものをインストール
+$ pip install pelican Markdown typogrify ghp-import
+```
+
+```
 /// ローカルでHTMLを確認
 $ make clean html && make serve
 
