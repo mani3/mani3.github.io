@@ -1,6 +1,6 @@
 Title: Raspberry Pi Zero W セットアップ メモ 
 Date: 2018-03-10 01:02:31
-Modified: 2018-03-10 01:02:31
+Modified: 2018-03-23 23:13:31
 Category: raspberrypi
 Tags: raspberry pi 
 Slug: raspberrypi-zero-w-setup-memo
@@ -52,8 +52,9 @@ $  passwd
 
 // 開発ツールなど
 $ sudo apt-get install clang cmake ninja-build libpthread-workqueue0 wiringpi 
-```
 
-<!-- uuid-dev libicu-dev icu-devtools libbsd-dev libedit-dev libxml2-dev libsqlite3-dev swig libpython-dev libncurses5-dev pkg-config libblocksruntime-dev libcurl4-openssl-dev autoconf libtool systemtap-sdt-dev -->
+// 追加
+$ sudo apt-get install uuid-dev libicu-dev icu-devtools libbsd-dev libedit-dev libxml2-dev libsqlite3-dev swig libpython-dev libncurses5-dev pkg-config libblocksruntime-dev libcurl4-openssl-dev autoconf libtool systemtap-sdt-dev
+```
 
 いろいろいじってから思い出しながら書いたので足りてないものもあるかもしれない。
