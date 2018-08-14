@@ -11,7 +11,7 @@ Summary: dlib で face landmark detection する
 事前に以下の場所から `shape_predictor_68_face_landmarks.dat.bz2` をダウンロードしておいて、
 `tmp` ディレクトリとかに解凍しておきます。
 
-* https://github.com/davisking/dlib-models/
+- [https://github.com/davisking/dlib-models/](https://github.com/davisking/dlib-models/)
 
 ```
 .
@@ -66,9 +66,10 @@ plt.show()
 ```
 
 ![lenna.png]({attach}images/lenna.png)
+![anzu.png]({attach}images/anzu.png)
 
 ### あとあと調べてみたら
 
 こちらのサンプルコードを見たほうが良さそう
 
-* http://dlib.net/face_alignment.py.html
+- [http://dlib.net/face_alignment.py.html](http://dlib.net/face_alignment.py.html)
