@@ -14,7 +14,9 @@ Summary: テクトモ#3 で話ししてきた
 
 ### 資料
 
-<script async class="speakerdeck-embed" data-id="72ab82fb9ce6412cb290634cad19e09c" data-ratio="1.41436464088398" src="//speakerdeck.com/assets/embed.js"></script>
+<div style="width: 65%; margin-bottom: 1.2em;">
+  <script async class="speakerdeck-embed" data-id="72ab82fb9ce6412cb290634cad19e09c" data-ratio="1.41436464088398" src="//speakerdeck.com/assets/embed.js"></script>
+</div>
 
 ### 良かったこと
 
