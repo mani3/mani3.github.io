@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Raspberry Pi Zero W セットアップ メモ | Lavieleaf
+</title>
+  <link rel="canonical" href="/posts/2018/Mar/10/raspberrypi-zero-w-setup-memo.html">
+
+
+
+  <link rel="stylesheet" href="/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="/theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Rasberry Pi Zero Wの設定メモ">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Raspberry Pi Zero W セットアップ メモ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2018-03-10T01:02:31+09:00">
+        <i class="fa fa-clock-o"></i>
+        Sat 10 March 2018
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="/category/raspberrypi.html">raspberrypi</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="/author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="/tag/raspberry-pi/">#raspberry pi</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h6>1. <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian</a> のダウンロード</h6>
+<h6>2. <a href="https://etcher.io/">Etcher</a> をインストール</h6>
+<h6>3. Etcher を使って Raspbian を SDカードに書き込む</h6>
+<h6>4. SDカードをマウントして以下のファイルを更新する</h6>
+<div class="highlight"><pre><span></span>// rootwait のあとに <span class="sb">`</span>modules-load<span class="o">=</span>dwc2,g_ether<span class="sb">`</span> を追加する
+$ vim /Volumes/boot/cmdline.txt
+
+// <span class="sb">`</span><span class="nv">dtoverlay</span><span class="o">=</span>dwc2<span class="sb">`</span> を追加する
+$ vim /Volumes/boot/config.txt
+
+// ssh というからのファイルを作成
+$ touch /Volumes/boot/ssh
+</pre></div>
+
+
+<h6>5. Raspberry Pi に SDカード を指して、USB ケーブルで macOS と Raspberry Pi をつなぐ</h6>
+<h6>6. <code>ssh pi@raspberrypi.local</code> で入って色々設定する</h6>
+<div class="highlight"><pre><span></span>// 言語設定
+$ sudo apt-get update
+$ sudo apt-get -y install language-pack-ja
+$ sudo locale-gen ja_JP.UTF-8
+$ sudo localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+
+// wifi の設定を追加
+$ sudo vi /etc/wpa_supplicant/wpa_supplicant.conf
+<span class="nv">network</span><span class="o">={</span>
+  <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;xxxx&quot;</span>
+  <span class="nv">psk</span><span class="o">=</span><span class="s2">&quot;xxxx&quot;</span>
+<span class="o">}</span>
+
+// エディタなど
+$ curl -o .vimrc https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim
+$ sudo apt-get install vim tmux
+
+// piユーザのパスワード変更
+$  passwd
+
+// 開発ツールなど
+$ sudo apt-get install clang cmake ninja-build libpthread-workqueue0 wiringpi 
+
+// 追加
+$ sudo apt-get install uuid-dev libicu-dev icu-devtools libbsd-dev libedit-dev libxml2-dev libsqlite3-dev swig libpython-dev libncurses5-dev pkg-config libblocksruntime-dev libcurl4-openssl-dev autoconf libtool systemtap-sdt-dev
+</pre></div>
+
+
+<p>いろいろいじってから思い出しながら書いたので足りてないものもあるかもしれない。</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="/authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="/archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="/categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="/tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
