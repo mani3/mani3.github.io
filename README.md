@@ -7,7 +7,7 @@ $ pyenv versions
 * 3.6.4
 
 /// 必要なものをインストール
-$ pip install pelican Markdown typogrify ghp-import
+$ pip install pelican Markdown typogrify ghp-import pelican_advance_embed_tweet
 ```
 
 ```
