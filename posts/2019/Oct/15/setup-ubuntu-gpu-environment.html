@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>UbuntuでGPU環境をセットアップ | Lavieleaf
+</title>
+  <link rel="canonical" href="/posts/2019/Oct/15/setup-ubuntu-gpu-environment.html">
+
+
+
+  <link rel="stylesheet" href="/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="/theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="なかなかスタンダードな方法はないのかな">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>UbuntuでGPU環境をセットアップ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2019-10-15T02:46:57+09:00">
+        <i class="fa fa-clock-o"></i>
+        Tue 15 October 2019
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="/category/deep-learning.html">deep-learning</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="/author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="/tag/deep-learning/">#deep-learning</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>先日 RTX 2080 Ti を購入したのだけど、MNISTくらいのタスクは実行できるのだけど大きいタスクをやらせると画面にノイズが入って勝手に再起動してしまう現象が起きて苦労した。
+結局、初期不良ということで交換対応してもらえた。
+そのときにNVIDIAドライバを入れ直したり環境を作ったり壊したりしていて、良さそうなGPU環境のセットアップを決めた。
+もう、CUDAのインストールも面倒なのでDockerベースでやることにした。</p>
+<ul>
+<li>https://github.com/NVIDIA/nvidia-docker</li>
+</ul>
+<p>上記のリポジトリにnvidiaのコンテナイメージが提供されている。
+今後学習もコンテナでやることにしたので、準備をつらつら書いてみる</p>
+<h2>準備</h2>
+<ul>
+<li>Ubuntu 18.04</li>
+</ul>
+<h2>NVIDIA ドライバのインストール</h2>
+<p><a href="https://github.com/NVIDIA/nvidia-docker">NVIDIA/nvidia-docker</a>にもあるが、NVIDIAドライバのインストールは最低限必要になっている。</p>
+<p>Ubuntu環境で <code>ubuntu-drivers devices</code> を実行すると推奨ドライバがわかる。</p>
+<div class="highlight"><pre><span></span>$ ubuntu-drivers <span class="nv">devices</span>
+<span class="o">==</span> /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 <span class="o">==</span>
+modalias : pci:v000010DEd00001E07sv000010DEsd00001E07bc03sc00i00
+vendor   : NVIDIA Corporation
+driver   : nvidia-driver-430 - distro non-free recommended
+driver   : xserver-xorg-video-nouveau - distro free <span class="nb">builtin</span>
+</pre></div>
+
+
+<p>とりあえず、自動でインストールして再起動する</p>
+<div class="highlight"><pre><span></span>$ sudo ubuntu-drivers autoinstall
+$ sudo reboot now
+</pre></div>
+
+
+<p>再起動後にデバイスが認識しているか <code>nvidia-smi</code> を実行する。一応大丈夫そう。</p>
+<div class="highlight"><pre><span></span>$ nvidia-smi
+Sat Oct <span class="m">13</span> <span class="m">00</span>:24:59 <span class="m">2019</span>
++-----------------------------------------------------------------------------+
+<span class="p">|</span> NVIDIA-SMI <span class="m">430</span>.26       Driver Version: <span class="m">430</span>.26       CUDA Version: <span class="m">10</span>.2     <span class="p">|</span>
+<span class="p">|</span>-------------------------------+----------------------+----------------------+
+<span class="p">|</span> GPU  Name        Persistence-M<span class="p">|</span> Bus-Id        Disp.A <span class="p">|</span> Volatile Uncorr. ECC <span class="p">|</span>
+<span class="p">|</span> Fan  Temp  Perf  Pwr:Usage/Cap<span class="p">|</span>         Memory-Usage <span class="p">|</span> GPU-Util  Compute M. <span class="p">|</span>
+<span class="p">|</span><span class="o">===============================</span>+<span class="o">======================</span>+<span class="o">======================</span><span class="p">|</span>
+<span class="p">|</span>   <span class="m">0</span>  GeForce RTX <span class="m">208</span>...  Off  <span class="p">|</span> <span class="m">00000000</span>:01:00.0  On <span class="p">|</span>                  N/A <span class="p">|</span>
+<span class="p">|</span> <span class="m">35</span>%   40C    P8    24W / 260W <span class="p">|</span>     99MiB / 11016MiB <span class="p">|</span>      <span class="m">0</span>%      Default <span class="p">|</span>
++-------------------------------+----------------------+----------------------+
+
+
++-----------------------------------------------------------------------------+
+<span class="p">|</span> Processes:                                                       GPU Memory <span class="p">|</span>
+<span class="p">|</span>  GPU       PID   Type   Process name                             Usage      <span class="p">|</span>
+<span class="p">|</span><span class="o">=============================================================================</span><span class="p">|</span>
+<span class="p">|</span>    <span class="m">0</span>      <span class="m">1078</span>      G   /usr/lib/xorg/Xorg                            39MiB <span class="p">|</span>
+<span class="p">|</span>    <span class="m">0</span>      <span class="m">1124</span>      G   /usr/bin/gnome-shell                          58MiB <span class="p">|</span>
++——————————————————————————————————————+
+</pre></div>
+
+
+<h2>Docker インストール</h2>
+<p>ほとんど、公式のインストール方法のまま。現時点の最新は19.03。</p>
+<ul>
+<li>https://docs.docker.com/install/linux/docker-ce/ubuntu/</li>
+</ul>
+<div class="highlight"><pre><span></span>$ sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg <span class="p">|</span> sudo apt-key add -
+$ sudo apt-key fingerprint 0EBFCD88
+$ sudo add-apt-repository <span class="se">\</span>
+    <span class="s2">&quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \</span>
+<span class="s2">    </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2"> \</span>
+<span class="s2">    stable&quot;</span>
+$ sudo apt-get update <span class="o">&amp;&amp;</span> sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+$ sudo usermod -aG docker &lt;user&gt;
+$ sudo reboot now
+$ docker version
+Client: Docker Engine - Community
+ Version:           <span class="m">19</span>.03.3
+ API version:       <span class="m">1</span>.40
+ Go version:        go1.12.10
+ ...
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          <span class="m">19</span>.03.3
+  API version:      <span class="m">1</span>.40 <span class="o">(</span>minimum version <span class="m">1</span>.12<span class="o">)</span>
+  Go version:       go1.12.10
+ ...
+</pre></div>
+
+
+<h2>NVIDIA のコンテナツールのインストール</h2>
+<p>これは <a href="https://github.com/NVIDIA/nvidia-docker">NVIDIA/nvidia-docker</a> のまま。</p>
+<div class="highlight"><pre><span></span>$ <span class="nv">distribution</span><span class="o">=</span><span class="k">$(</span>. /etc/os-release<span class="p">;</span><span class="nb">echo</span> <span class="nv">$ID$VERSION_ID</span><span class="k">)</span>
+$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey <span class="p">|</span> sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-docker/<span class="nv">$distribution</span>/nvidia-docker.list <span class="p">|</span> sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+$ sudo apt-get update <span class="o">&amp;&amp;</span> sudo apt-get install -y nvidia-container-toolkit
+$ sudo systemctl restart docker
+$ sudo reboot now
+$ docker run --gpus all --rm nvidia/cuda nvidia-smi
+Unable to find image <span class="s1">&#39;nvidia/cuda:latest&#39;</span> locally
+latest: Pulling from nvidia/cuda
+35c102085707: Pull <span class="nb">complete</span>
+...
+Status: Downloaded newer image <span class="k">for</span> nvidia/cuda:latest
+Fri Oct <span class="m">14</span> <span class="m">15</span>:42:40 <span class="m">2019</span>
++-----------------------------------------------------------------------------+
+<span class="p">|</span> NVIDIA-SMI <span class="m">430</span>.26       Driver Version: <span class="m">430</span>.26       CUDA Version: <span class="m">10</span>.2     <span class="p">|</span>
+<span class="p">|</span>-------------------------------+----------------------+----------------------+
+<span class="p">|</span> GPU  Name        Persistence-M<span class="p">|</span> Bus-Id        Disp.A <span class="p">|</span> Volatile Uncorr. ECC <span class="p">|</span>
+<span class="p">|</span> Fan  Temp  Perf  Pwr:Usage/Cap<span class="p">|</span>         Memory-Usage <span class="p">|</span> GPU-Util  Compute M. <span class="p">|</span>
+<span class="p">|</span><span class="o">===============================</span>+<span class="o">======================</span>+<span class="o">======================</span><span class="p">|</span>
+<span class="p">|</span>   <span class="m">0</span>  GeForce RTX <span class="m">208</span>...  Off  <span class="p">|</span> <span class="m">00000000</span>:01:00.0 Off <span class="p">|</span>                  N/A <span class="p">|</span>
+<span class="p">|</span> <span class="m">35</span>%   33C    P8    22W / 260W <span class="p">|</span>     26MiB / 11016MiB <span class="p">|</span>      <span class="m">0</span>%      Default <span class="p">|</span>
++-------------------------------+----------------------+----------------------+
+
+
++-----------------------------------------------------------------------------+
+<span class="p">|</span> Processes:                                                       GPU Memory <span class="p">|</span>
+<span class="p">|</span>  GPU       PID   Type   Process name                             Usage      <span class="p">|</span>
+<span class="p">|</span><span class="o">=============================================================================</span><span class="p">|</span>
++-----------------------------------------------------------------------------+
+</pre></div>
+
+
+<h2>Dockerfile</h2>
+<p>最終的な学習用のコンテナイメージはこんな感じで、これからはTF2.0を使っていこうと思う。
+<code>jupyterlab</code> を使えるようにしている。また <code>jupyterlab</code> から Tensorboard が開けるように nodejs 12.xをインストールするようにしてる。</p>
+<div class="highlight"><pre><span></span><span class="k">FROM</span><span class="s"> tensorflow/tensorflow:2.0.0-gpu-py3</span>
+
+<span class="k">RUN</span> apt-get update <span class="o">&amp;&amp;</span> apt-get install -y --no-install-recommends <span class="se">\</span>
+libsm6 <span class="se">\</span>
+libxext6 <span class="se">\</span>
+libxrender-dev
+
+<span class="k">RUN</span> apt-get clean <span class="o">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*
+
+<span class="k">RUN</span> /usr/local/bin/pip install -U pip
+<span class="k">RUN</span> /usr/local/bin/pip --no-cache-dir install <span class="se">\</span>
+wheel <span class="se">\</span>
+Pillow <span class="se">\</span>
+matplotlib <span class="se">\</span>
+numpy <span class="se">\</span>
+pandas <span class="se">\</span>
+scipy <span class="se">\</span>
+sklearn <span class="se">\</span>
+tqdm <span class="se">\</span>
+argparse <span class="se">\</span>
+boto3 <span class="se">\</span>
+mtcnn <span class="se">\</span>
+Cython <span class="se">\</span>
+contextlib2 <span class="se">\</span>
+lxml <span class="se">\</span>
+jupyter <span class="se">\</span>
+jupyterlab <span class="se">\</span>
+easydict
+
+<span class="k">RUN</span> /usr/local/bin/pip --no-cache-dir install <span class="se">\</span>
+kaggle <span class="se">\</span>
+opencv-python
+
+<span class="k">RUN</span> curl -sL https://deb.nodesource.com/setup_12.x <span class="p">|</span> bash
+<span class="k">RUN</span> apt-get install -y nodejs
+<span class="k">RUN</span> jupyter labextension install jupyterlab_tensorboard
+</pre></div>
+
+
+<h3>使い方</h3>
+<div class="highlight"><pre><span></span>// イメージを作る
+$ docker build -t tf2 -f Dockerfile .
+
+// jupyterlab を起動させる
+$ docker run -p <span class="m">8888</span>:8888 -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>:/docker --gpus all -it --rm tf2 jupyter lab --ip<span class="o">=</span><span class="m">0</span>.0.0.0 --allow-root
+</pre></div><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="/authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="/archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="/categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="/tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
