@@ -8,6 +8,9 @@ $ pyenv versions
 
 /// 必要なものをインストール
 $ pip install pelican Markdown typogrify ghp-import pelican_advance_embed_tweet
+
+// MathJaxのためにPelicanのプラグインを取ってくる
+$ git clone --recursive https://github.com/getpelican/pelican-plugins
 ```
 
 ```

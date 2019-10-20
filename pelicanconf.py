@@ -75,4 +75,5 @@ EXTRA_PATH_METADATA = {
 
 GOOGLE_ANALYTICS = 'UA-26392156-5'
 
-PLUGINS = ['pelican_advance_embed_tweet']
+PLUGIN_PATHS = ['./pelican-plugins']
+PLUGINS = ['pelican_advance_embed_tweet', 'render_math']
