@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>try! Swift Tokyo 2019 参加メモ | Lavieleaf
+</title>
+  <link rel="canonical" href="/posts/2019/03/28/tryswifttokyo2019.html">
+
+
+
+  <link rel="stylesheet" href="/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="/theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="try! Swift Tokyo 2019 参加メモ">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>try! Swift Tokyo 2019 参加メモ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2019-03-28T23:45:45+09:00">
+        <i class="fa fa-clock-o"></i>
+        Thu 28 March 2019
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="/category/ios.html">ios</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="/author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="/tag/ios/">#ios</a>,         <a href="/tag/swift/">#swift</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <p><img alt="header" src="/posts/2019/03/28/images/tryswifttokyo2019-header.png"></p>
+<h2>3月21日（1日目）</h2>
+<hr>
+<h3>10:00 - native macOS application、またはAppKitの世界</h3>
+<p><a href="https://twitter.com/1024jp">@1024jp</a></p>
+<ul>
+<li>CotEditor<ul>
+<li>https://github.com/coteditor</li>
+</ul>
+</li>
+</ul>
+<h3>10:25 - ⚡️🎤脱Swiftリテラル初心者</h3>
+<ul>
+<li>リテラル表記がIntになるまで</li>
+<li>AST -&gt; Sema でBuilt-in リテラルに変換<ul>
+<li>CompilerProtocol.Swift</li>
+</ul>
+</li>
+<li>SE-0213<ul>
+<li>Swift 5.0 SILからLiteral が変更されてる</li>
+</ul>
+</li>
+<li>CGFloat はアーキテクチャによって Float, Double を使い分けている<ul>
+<li>CoreGraphic</li>
+</ul>
+</li>
+</ul>
+<h3>10:35 - アクセシビリティのためのカラーコントラスト</h3>
+<ul>
+<li>資料<ul>
+<li>https://raw.githubusercontent.com/emarley/ColorContrast/master/ColorContrast.pdf</li>
+</ul>
+</li>
+<li>WCAG20(https://www.w3.org/TR/WCAG20/)</li>
+<li>4.5:1 以上のコントラスト比<ul>
+<li>理想は 7:1</li>
+</ul>
+</li>
+<li>チェック<ul>
+<li>https://webaim.org/resources/contrastchecker/</li>
+</ul>
+</li>
+<li>Apple <ul>
+<li>Dark Mode</li>
+<li>OLED</li>
+</ul>
+</li>
+<li>macOS<ul>
+<li>NSColor.labelColor</li>
+</ul>
+</li>
+</ul>
+<h3>11:30 - Swift Light</h3>
+<p><a href="https://twitter.com/bugkrusha">@bugkrusha</a> Glowforge</p>
+<ul>
+<li>iOSでSVG<ul>
+<li>SVG の translation と CoreGraphic の 座標系が異なる?ので注意</li>
+</ul>
+</li>
+</ul>
+<h3>11:55 - ⚡️🎤限定的なimportの明示とその効果</h3>
+<ul>
+<li>import のオプション</li>
+<li>attributes</li>
+<li>submodule<ul>
+<li>SceneKit</li>
+</ul>
+</li>
+<li>importKind<ul>
+<li>優先的にimportを指定できる</li>
+</ul>
+</li>
+<li>バイナリサイズやビルド時間は変わらない<ul>
+<li>コンパイラが最適化してる</li>
+</ul>
+</li>
+<li>今まで通りでOK</li>
+</ul>
+<h3>12:05 - protocol/extensionにジェネリクスを入れたい</h3>
+<p><a href="https://twitter.com/_yyu_">@_yyu_</a></p>
+<ul>
+<li>HLIST(Heterogeneous List)<ul>
+<li>複数の型が入るListを作りたい</li>
+</ul>
+</li>
+</ul>
+<h3>12:30 - Keypath入門</h3>
+<p><a href="https://twitter.com/terhechte">@terhechte</a></p>
+<ul>
+<li>KeyPath swift4</li>
+<li>Keypathを使えば protocol SettingsEntityを定義することも可能</li>
+<li>KeyPath<Root, Value></li>
+<li>Generic UI家できる SettingsEntity</li>
+<li>KeyPath Libs<ul>
+<li>Kuery</li>
+<li>Keypathkit</li>
+</ul>
+</li>
+<li>appventure.me</li>
+</ul>
+<h3>14:30 - テストケースでMemory Leakを発見する</h3>
+<p><a href="https://twitter.com/tarunon">@tarunon</a></p>
+<ul>
+<li>XCTAssertNoLeak<ul>
+<li>https://github.com/tarunon/XCTAssertNoLeak</li>
+</ul>
+</li>
+</ul>
+<h3>14:55 - ⚡️🎤PixarのようなグラフィックをSwiftで実現する</h3>
+<p><a href="https://twitter.com/kapsy1312">@kapsy1312</a></p>
+<ul>
+<li>Ray tracing in Swift<ul>
+<li>https://github.com/kapsy/swift_ray_tracer</li>
+</ul>
+</li>
+</ul>
+<h3>15:05 - ARKitのアプリを作ろう</h3>
+<ul>
+<li>ARAnchor</li>
+<li>ARWorldMap</li>
+<li>https://github.com/namratabandekar/talks</li>
+</ul>
+<h3>15:30 - ⚡️🎤Introducing SourceKit-LSP</h3>
+<p><a href="https://twitter.com/izm256">@izm256</a></p>
+<ul>
+<li>LSPが定義されていればXcodeで扱うことが可能</li>
+<li>https://github.com/apple/sourcekit-lsp</li>
+</ul>
+<h3>15:40 - Swift Server Update</h3>
+<p><a href="https://twitter.com/tomerdoron">@tomerdoron</a> in apple</p>
+<ul>
+<li>Swift SErver Ecosystem</li>
+<li>Swift でサーバー <ul>
+<li>C bridge が簡単</li>
+<li>No ガーベージコレクション</li>
+</ul>
+</li>
+<li>Lib<ul>
+<li>Amazon smoke framework</li>
+<li>SwiftNIO</li>
+</ul>
+</li>
+<li>Server<ul>
+<li>Metrics Logging Tracing</li>
+<li>https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html</li>
+</ul>
+</li>
+<li>SwiftPM</li>
+<li>Server Working Group<ul>
+<li>https://swift.org/server/</li>
+<li>https://github.com/apple/swift-docker</li>
+<li>https://github.com/apple/swift-log</li>
+<li>https://github.com/vapor/nio-postgres</li>
+<li>https://github.com/Mordil/nio-redis</li>
+</ul>
+</li>
+<li>SwiftNIO<ul>
+<li>HTTP/2, SSL</li>
+<li>boringssl</li>
+</ul>
+</li>
+<li>https://forums.swift.org/t/discussion-server-metrics-api/19600</li>
+</ul>
+<h3>16:35 - SwiftのアプリでCやC++、Objective-Cのフレームワークを使おう</h3>
+<p><a href="https://twitter.com/CeciliaHumlelu">@CeciliaHumlelu</a></p>
+<ul>
+<li>1996: Apple Objective-C</li>
+<li>Dependences, Wrappers, Recap</li>
+<li>Pure Cであれば module で行ける</li>
+<li>Wrapper<ul>
+<li>Objective-C: NS_SWIFT_NAME()</li>
+</ul>
+</li>
+<li>https://github.com/TokyoBirdy</li>
+</ul>
+<h3>17:00 - ⚡️🎤MachObfuscator</h3>
+<p><a href="https://twitter.com/kam800">@kam800</a></p>
+<ul>
+<li>https://github.com/kam800/MachObfuscator</li>
+</ul>
+<h3>17:10 - Siri ShortcutsとNSUserActivityによるエンゲージメント推進</h3>
+<p><a href="https://twitter.com/nictheawesome">@nictheawesome</a></p>
+<ul>
+<li>https://github.com/niclaughter/SiriShortcuts</li>
+<li>参考: https://www.tryswift.co/events/2018/nyc/#siri<ul>
+<li>Let Them Say What They Want: Adding Siri Shortcuts</li>
+</ul>
+</li>
+</ul>
+<h3>17:35 - try Prototype!</h3>
+<p><a href="https://twitter.com/mennenia">@mennenia</a></p>
+<ul>
+<li>Prototype Mindset</li>
+</ul>
+<h2>3月22日（2日目）</h2>
+<hr>
+<h3>10:00 - 魔法の法則</h3>
+<p><a href="https://twitter.com/davedelong">@davedelong</a></p>
+<ul>
+<li>Brandon Ssanderson<ul>
+<li>王たちの道、ミストトーン</li>
+<li>3つの法則<ul>
+<li>作者が魔法でまんぞするかユーザの理解に反比例<ul>
+<li>ユーザに何が起きているか説明する責任</li>
+<li>質問を予測</li>
+</ul>
+</li>
+<li>制限は権力よりも重要です limitations &gt; powers<ul>
+<li>できないことはできることよりも面白い</li>
+<li>キャラクタは何ができないか</li>
+<li>成約は創造的であることを con force creativlty</li>
+</ul>
+</li>
+<li>新しいものを追加する前に既存のものを拡張する  <ul>
+<li>隠された深さを発見することはexciting</li>
+<li>Brandonのキャラクタには、常に別の秘密がある</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Arthur C. Clarke</li>
+</ul>
+</li>
+<li>
+<p>iPhone: Sand, Metal, SAme wired mineralをいい感じに混ぜてる</p>
+</li>
+<li>
+<p>Swift の型システムを使う</p>
+</li>
+<li>ドキュメントと診断<ul>
+<li><a href="https://twitter.com/available">@available</a><ul>
+<li>無効のmethod、置き換えのmethodなど定義できる</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>どんな制限に従うか<ul>
+<li>2</li>
+</ul>
+</li>
+<li>3<ul>
+<li>Refactor and evolve</li>
+<li>サポートするものがあるかどうか</li>
+</ul>
+</li>
+</ul>
+<h3>10:25 - ⚡️🎤ポートレートモードを自作しよう</h3>
+<p><a href="https://twitter.com/koooootake">@koooootake</a></p>
+<ul>
+<li>https://github.com/koooootake/Portrait-without-Depth-ios</li>
+</ul>
+<h3>10:35 - Swiftでソーシャルネットワークをつくろう</h3>
+<p><a href="https://twitter.com/alfa">@alfa</a>, <a href="https://twitter.com/dokun24">@dokun24</a></p>
+<ul>
+<li>Kitura<ul>
+<li>Allegro, bit.ly/swiftallegro</li>
+</ul>
+</li>
+<li>HELM</li>
+<li>Prometheus</li>
+<li>OpenAPI<ul>
+<li>API documentation</li>
+</ul>
+</li>
+<li>LSP: language server protocd</li>
+<li>Production<ul>
+<li>onlineswiftplayground.run</li>
+<li>www.agenda.com</li>
+<li>www.bankingofthings.io</li>
+</ul>
+</li>
+<li>ibm.biz/trykitura</li>
+<li>slack.kitura.io #tryandwin</li>
+</ul>
+<h3>11:30 - Swift Hardware Hacking</h3>
+<p><a href="https://twitter.com/mostgood">@mostgood</a></p>
+<ul>
+<li>Geany: Ras pi IDE</li>
+<li>MCP3008: デジアナ変換<ul>
+<li>Photoresistor</li>
+</ul>
+</li>
+<li>Load cell: 荷重センサ</li>
+<li>PureSwift<ul>
+<li>https://github.com/PureSwift</li>
+<li>iOS: CoreBluetooth API</li>
+</ul>
+</li>
+</ul>
+<h3>11:55 - ⚡️🎤SwiftSyntax で便利を実現する基礎</h3>
+<p><a href="https://twitter.com/orga_chem">@orga_chem</a></p>
+<ul>
+<li>SwiftSyntax<ul>
+<li>https://github.com/apple/swift-syntax</li>
+</ul>
+</li>
+<li>Slide<ul>
+<li>https://speakerdeck.com/orgachem/how-to-use-swiftsyntax-for-better-productivity-japanese-version</li>
+</ul>
+</li>
+</ul>
+<h3>12:05 - Swift type metadata</h3>
+<p><a href="https://twitter.com/kateinoigakukun">@kateinoigakukun</a></p>
+<ul>
+<li>let metadata: Cell.Type = Cell.self</li>
+<li>SwiftCore</li>
+<li>SwiftRuntime</li>
+<li>stdlib/puclic/core/Mirror.swift</li>
+<li>stdlib/puclic/core/Misc.swift</li>
+<li><a href="https://twitter.com/_silgen_name">@_silgen_name</a>("swift_getTypeName")</li>
+<li>Nominal Type Descriptor<ul>
+<li>Type Name</li>
+</ul>
+</li>
+<li>docs/ABI/TypeMetadata.rst</li>
+<li>Relative Pointer<ul>
+<li>include/swift/Basic/RelativePointer.swift</li>
+</ul>
+</li>
+<li>Alllocate instance, Dynamic method dispathc(VTable), Reflection(Mirror)</li>
+<li>Method swizzling<ul>
+<li>FnctionRef</li>
+<li>Zewo/Reflection, wickwirew, alibaba/HandyJSON, kateinoigakukun/StubKit</li>
+</ul>
+</li>
+</ul>
+<h3>12:30 - モバイルのデザインシステムを構築する</h3>
+<p><a href="https://twitter.com/krstnfx">@krstnfx</a></p>
+<ul>
+<li>http://bradfrost.com/blog/post/atomic-web-design/</li>
+<li>https://medium.freecodecamp.org/how-to-build-a-design-system-with-a-small-team-53a3276d44ac</li>
+<li>https://github.com/airbnb/epoxy</li>
+</ul>
+<h3>14:30 - Swiftにおける音の成形</h3>
+<p><a href="https://twitter.com/b3ll">@b3ll</a></p>
+<ul>
+<li>シンセサイザー<ul>
+<li>Roland D-50: PS1</li>
+</ul>
+</li>
+<li>Oscillator<ul>
+<li>Amplitude, Freq, Shape</li>
+</ul>
+</li>
+<li>y = 440 * 2^(x - 49 / 12)</li>
+<li>CoreAudio<ul>
+<li>AudioStreamBasicDescription</li>
+<li>複雑</li>
+</ul>
+</li>
+<li>AudioKit<ul>
+<li>容易に扱える</li>
+<li>https://github.com/AudioKit/AudioKit</li>
+<li>PWM pulse width modulation</li>
+<li>パルス幅によって特性が異なる</li>
+<li>AKPWMOs</li>
+</ul>
+</li>
+<li>Envelopes<ul>
+<li>ADSR (Attack, Decay, Sustain Release)</li>
+<li>Pluck Saound</li>
+<li>Pad Sound</li>
+<li>AKSomeEffect</li>
+</ul>
+</li>
+<li>Filter<ul>
+<li>Notch Filter: 中だけ残す</li>
+<li>Resonance, chorus, reverb...</li>
+</ul>
+</li>
+<li>Audulus</li>
+</ul>
+<h3>14:55 - ⚡️🎤iOS端末を利用した心理学研究の背景と展望</h3>
+<p><a href="https://twitter.com/expensive_man">@expensive_man</a></p>
+<ul>
+<li>回すの動作などの心理実験にiPadなど利用してる</li>
+</ul>
+<h3>15:05 - SwiftCheckで始めるProperty-based Testing</h3>
+<p><a href="https://twitter.com/tobi462">@tobi462</a></p>
+<ul>
+<li>Property-based test vs Example-based tesst</li>
+<li>SwiftCheck<ul>
+<li>https://github.com/typelift/SwiftCheck</li>
+<li>Arbitrary<ul>
+<li>Pointなどカスタムする場合Arbitrary Protocolに準拠</li>
+</ul>
+</li>
+<li>Shrinking<ul>
+<li>境界を探してくれるぽいやつ</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Ramdom, Synmetry, Fast vs Slow </li>
+</ul>
+<h3>15:30 - ⚡️🎤All about linking libraries</h3>
+<p><a href="https://twitter.com/k_katsumi">@k_katsumi</a></p>
+<ul>
+<li>Bundle: ディレクトリ構造がある</li>
+<li>modulemapあり<ul>
+<li>Framework search path </li>
+</ul>
+</li>
+<li>modulemapなし<ul>
+<li>Modulemap<ul>
+<li>Import Paths</li>
+</ul>
+</li>
+<li>Bridgeing Header</li>
+</ul>
+</li>
+<li>Dynamic Frameworkは実行時にリンクできない</li>
+<li>Static Framework はコンパイル時にリンクできない</li>
+</ul>
+<h3>15:40 - 賢者のString(The Ohilosopher's String)</h3>
+<p><a href="https://twitter.com/Ilseman">@Ilseman</a> in Apple</p>
+<p>standerd library team</p>
+<ul>
+<li>Unicode compliant</li>
+<li>Code Unit -&gt; Unicode Scalar -&gt; Charactor</li>
+<li>
+<p>Degenerate Graphemes</p>
+</li>
+<li>
+<p>jobに応じて UnicodeScalarをつかう。人間的にはコレクション</p>
+</li>
+<li>Swift4.2とかでメモリ小</li>
+<li>Swift5.0 // UTF-8 String<ul>
+<li>https://swift.org/blog/utf8-string/</li>
+</ul>
+</li>
+<li>Feature<ul>
+<li>Unicode enthuslasts unite</li>
+<li>String Essentials</li>
+<li>...</li>
+</ul>
+</li>
+<li>Swift5 Formatting String<ul>
+<li>printScalarInfo</li>
+<li>U+16HEX</li>
+<li>DefaultStringInterpolation(Custom Interpolation)</li>
+</ul>
+</li>
+</ul>
+<h3>16:35 - アセンブリ、君ならできる！</h3>
+<p><a href="https://twitter.com/armadsen">@armadsen</a></p>
+<ul>
+<li>https://www.swiftcommunitypodcast.org/</li>
+<li>Assembly</li>
+<li>デバッグ、Cocoaフレームワークの理解に役立つ</li>
+<li>Registers<ul>
+<li>x86 16個</li>
+<li>一種のメモリ</li>
+</ul>
+</li>
+<li>Mnemonic<ul>
+<li>CPU instraction</li>
+<li>mov, ret, cmp, nop(遅延処理したいとき), jne...</li>
+</ul>
+</li>
+<li>Intel: instruction dect source</li>
+<li>Calling Convention(呼び出し規約)<ul>
+<li>SystemV</li>
+<li>rdi, rsi, rdx, rcx, r8, r9, rax</li>
+</ul>
+</li>
+<li>Objective-C<ul>
+<li>po $rdi</li>
+</ul>
+</li>
+<li>LLDB<ul>
+<li>b </li>
+<li>po (SEL)$rsi</li>
+<li>po (id)$rdx</li>
+</ul>
+</li>
+<li>cpo </li>
+<li>Hopper Disassembler<ul>
+<li>https://www.hopperapp.com/</li>
+</ul>
+</li>
+</ul>
+<h3>17:00 - ⚡️🎤Swiftコンパイラにコントリビュートする</h3>
+<p><a href="https://twitter.com/kitasuke">@kitasuke</a></p>
+<ul>
+<li>parse ast sema sil ir llvm *.o</li>
+<li>libSyntax</li>
+<li>AST</li>
+<li>SIL</li>
+</ul>
+<h3>17:10 - Core Dataを守るために</h3>
+<p><a href="https://twitter.com/DonnyWals">@DonnyWals</a></p>
+<ul>
+<li>Core Data stack</li>
+<li>-com.apple.CoreData.SQLDebug 4</li>
+<li>-com.apple.CoreData.Logging.stderr 1</li>
+</ul>
+<h3>17:35 - 次へつなごう— Extending a hand to the next generation of Apple developers</h3>
+<p><a href="https://twitter.com/hellomayuko">@hellomayuko</a></p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="/authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="/archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="/categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="/tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
