@@ -16,8 +16,8 @@ TIMEZONE = 'Asia/Tokyo'
 
 DEFAULT_LANG = u'ja'
 
-ARTICLE_URL = 'posts/{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
-ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
+ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
+ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 TAG_URL = 'tag/{slug}/'
 TAG_SAVE_AS = 'tag/{slug}/index.html'
 TAGS_URL = 'tags.html'
@@ -65,15 +65,19 @@ DATE_FORMATS = {
 STATIC_PATHS = [
     'images',
     'extra/robots.txt',
-    'extra/favicon.ico'
+    'extra/favicon.ico',
+    'perspective-correction',
 ]
 
 EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
-    'extra/favicon.ico': {'path': 'favicon.ico'}
+    'extra/favicon.ico': {'path': 'favicon.ico'},
+    'perspective-correction/index.html': {'path': 'perspective-correction/index.html'}
 }
 
 GOOGLE_ANALYTICS = 'UA-26392156-5'
 
 PLUGIN_PATHS = ['./pelican-plugins']
 PLUGINS = ['pelican_advance_embed_tweet', 'render_math']
+
+READERS = {"html": None}
