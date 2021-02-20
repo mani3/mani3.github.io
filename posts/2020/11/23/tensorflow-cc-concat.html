@@ -89,7 +89,7 @@
   <div class="content">
     <h2>はじめに</h2>
 <p>TensorFlow C++ API をつかって、推論などの方法を試してますが結構難しいです😭<br>
-実施に、推論するときには Session に対して、<code>tensorflow::Tensor</code> を入力に使いますが、たいていバッチに変換します。
+実際に、推論するときには Session に対して、<code>tensorflow::Tensor</code> を入力に使いますが、たいていバッチに変換します。
 <code>std::vector</code> や float 配列をバッチとして <code>tensorflow::Tensor</code> に変換するときに、Concat が使えそうなのですが ops なので Session での実行が伴います。
 なので、バッチ入力する場合、 <code>tensorflow::Tensor</code> に値をアサインしていくほうがベターなのかなと思います。</p>
 <p>そんなこんなで、Concat と 直接 Tensor に値を入れる方法の実装例をメモとして書いておきます。</p>
