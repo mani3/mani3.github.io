@@ -10,7 +10,7 @@ Summary: tensorflow::ops::Concat の実装例とか
 ## はじめに
 
 TensorFlow C++ API をつかって、推論などの方法を試してますが結構難しいです😭<br>
-実施に、推論するときには Session に対して、`tensorflow::Tensor` を入力に使いますが、たいていバッチに変換します。
+実際に、推論するときには Session に対して、`tensorflow::Tensor` を入力に使いますが、たいていバッチに変換します。
 `std::vector` や float 配列をバッチとして `tensorflow::Tensor` に変換するときに、Concat が使えそうなのですが ops なので Session での実行が伴います。
 なので、バッチ入力する場合、 `tensorflow::Tensor` に値をアサインしていくほうがベターなのかなと思います。
 
