@@ -1,11 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- #
-from __future__ import unicode_literals
-
-AUTHOR = u'mani3'
-SITENAME = u'Lavieleaf'
-SITEURL = ''
+AUTHOR = 'mani3'
+SITENAME = 'Lavieleaf'
 SITESUBTITLE = 'おもったことをなんでも書くことろ'
+SITEURL = 'https://mani3.github.io'
 
 THEME = 'pelican-alchemy/alchemy'
 PYGMENTS_STYLE = 'paraiso-dark'
@@ -14,17 +10,16 @@ PATH = 'content'
 
 TIMEZONE = 'Asia/Tokyo'
 
-DEFAULT_LANG = u'ja'
-
-ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
-ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
-TAG_URL = 'tag/{slug}/'
-TAG_SAVE_AS = 'tag/{slug}/index.html'
-TAGS_URL = 'tags.html'
-TAGS_SAVE_AS = TAGS_URL
-TAG_CLOUD_STEPS = 4
-TAG_CLOUD_MAX_ITEMS = 100
-DEFAULT_CATEGORY = ''
+DEFAULT_LANG = 'ja'
+ARTICLE_URL = 'posts/{slug}.html'
+ARTICLE_SAVE_AS = 'posts/{slug}.html'
+# TAG_URL = 'tag/{slug}/'
+# TAG_SAVE_AS = 'tag/{slug}/index.html'
+# TAGS_URL = 'tags.html'
+# TAGS_SAVE_AS = TAGS_URL
+# TAG_CLOUD_STEPS = 4
+# TAG_CLOUD_MAX_ITEMS = 100
+# DEFAULT_CATEGORY = ''
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -34,20 +29,17 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Blogroll
-# LINKS = (('Pelican', 'http://getpelican.com/'),
-#         ('Python.org', 'http://python.org/'),
-#         ('Jinja2', 'http://jinja.pocoo.org/'),
-#         ('You can modify those links in your config file', '#'),)
+# LINKS = (('Pelican', 'https://getpelican.com/'),
+#          ('Python.org', 'https://www.python.org/'),
+#          ('Jinja2', 'https://palletsprojects.com/p/jinja/'),
+#          ('You can modify those links in your config file', '#'),)
 
 # Social widget
 SOCIAL = (
-    ('github', 'http://github.com/mani3'),
+  ('github', 'http://github.com/mani3'),
 )
 
 DEFAULT_PAGINATION = 10
-
-# Uncomment following line if you want document-relative URLs when developing
-# RELATIVE_URLS = True
 
 AUTHORS = {
     u'mani3': '/about.html',
@@ -56,11 +48,6 @@ AUTHORS = {
 ICONS = (
     ('github', 'https://github.com/mani3'),
 )
-
-DATE_FORMATS = {
-    'en': ('en_US', '%a, %d %b %Y'),
-    'jp': ('ja_JP', '%Y-%m-%d(%a)'),
-}
 
 STATIC_PATHS = [
     'images',
@@ -81,3 +68,6 @@ PLUGIN_PATHS = ['./pelican-plugins']
 PLUGINS = ['pelican_advance_embed_tweet', 'render_math']
 
 READERS = {"html": None}
+
+# Uncomment following line if you want document-relative URLs when developing
+RELATIVE_URLS = True

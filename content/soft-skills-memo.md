@@ -7,7 +7,7 @@ Slug: soft-skills-memo
 Summary: 会社でSoft Skillsを読んだと人が多かったので、読んでみようと思い立ちました。
 
 
-<a target="_blank"  href="https://www.amazon.co.jp/gp/product/B01GDS0994/ref=as_li_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=B01GDS0994&linkCode=as2&tag=mani3-22&linkId=5b6fa87015a3db749b5512b4e1dcffd7"><img border="0" src="//ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=JP&ASIN=B01GDS0994&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=mani3-22" ></a><img src="//ir-jp.amazon-adsystem.com/e/ir?t=mani3-22&l=am2&o=9&a=B01GDS0994" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<a target="_blank"  href="https://www.amazon.co.jp/gp/product/B01GDS0994/ref=as_li_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=B01GDS0994&linkCode=as2&tag=mani3-22&linkId=5b6fa87015a3db749b5512b4e1dcffd7"><img border="0" src="//ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=JP&ASIN=B01GDS0994&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=mani3-22" ></a><img src="//ir-jp.amazon-adsystem.com/e/ir?t=mani3-22&l=am2&o=9&a=B01GDS0994" width="1" height="1" border="0" alt="book" style="border:none !important; margin:0px !important;" />
 
 会社でSoft Skillsを読んだと人が多かったので、読んでみようと思い立ちました。
 
