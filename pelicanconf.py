@@ -22,6 +22,8 @@ ARTICLE_SAVE_AS = 'posts/{slug}.html'
 # DEFAULT_CATEGORY = ''
 
 # Feed generation is usually not desired when developing
+FEED_ALL_RSS = 'feeds/all.rss.xml'
+CATEGORY_FEED_RSS = 'feeds/{slug}.rss.xml'
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
@@ -36,7 +38,7 @@ AUTHOR_FEED_RSS = None
 
 # Social widget
 SOCIAL = (
-  ('github', 'http://github.com/mani3'),
+    ('github', 'http://github.com/mani3'),
 )
 
 DEFAULT_PAGINATION = 10
