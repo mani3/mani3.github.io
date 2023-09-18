@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Apple Connect API 使ってアプリをアップロードする | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/ios-apple-connect-api.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Github Action 上で iOS アプリをビルドして、Apple Connect API 経由でアップロードする">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Apple Connect API 使ってアプリをアップロードする
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2021-02-21T00:33:28+09:00">
+        <i class="fa fa-clock-o"></i>
+        Sun 21 February 2021
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/ios.html">ios</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/ios.html">#ios</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>Apple Connect API</h2>
+<ol>
+<li>Apple Connect の User and Roles から Keys を開く</li>
+<li>「+」から名前と Developer を選択して Generate</li>
+<li>以下の3つを確認する<ul>
+<li>Issuer ID</li>
+<li>KEY ID</li>
+<li>.p8 ファイル</li>
+</ul>
+</li>
+</ol>
+<h2>Fastlane</h2>
+<p>Fastlane から 使う場合は、 app_store_connect_api_key メソッドを使う</p>
+<ul>
+<li>app_store_connect_api_key<ul>
+<li><a href="https://docs.fastlane.tools/actions/app_store_connect_api_key/">https://docs.fastlane.tools/actions/app_store_connect_api_key/</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">default_platform</span><span class="p">(</span><span class="ss">:ios</span><span class="p">)</span>
+
+<span class="n">platform</span><span class="w"> </span><span class="ss">:ios</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="n">desc</span><span class="w"> </span><span class="s2">&quot;Builds the app for AppStore release&quot;</span>
+<span class="w">  </span><span class="n">lane</span><span class="w"> </span><span class="ss">:build_release</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">options</span><span class="o">|</span>
+
+<span class="w">    </span><span class="c1"># Apple Connect API</span>
+<span class="w">    </span><span class="n">api_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app_store_connect_api_key</span><span class="p">(</span>
+<span class="w">      </span><span class="ss">key_id</span><span class="p">:</span><span class="w"> </span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;APPLE_STORE_CONNECT_KEY_ID&#39;</span><span class="o">]</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">issuer_id</span><span class="p">:</span><span class="w"> </span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;APPLE_STORE_CONNECT_ISSUER_ID&#39;</span><span class="o">]</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">key_content</span><span class="p">:</span><span class="w"> </span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;APPLE_STORE_CONNECT_KEY_CONTENT&#39;</span><span class="o">]</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">team_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">CredentialsManager</span><span class="o">::</span><span class="no">AppfileConfig</span><span class="o">.</span><span class="n">try_fetch_value</span><span class="p">(</span><span class="ss">:team_id</span><span class="p">)</span>
+<span class="w">    </span><span class="n">app_identifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">CredentialsManager</span><span class="o">::</span><span class="no">AppfileConfig</span><span class="o">.</span><span class="n">try_fetch_value</span><span class="p">(</span><span class="ss">:app_identifier</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># ...</span>
+
+<span class="w">    </span><span class="c1"># Generate build number</span>
+<span class="w">    </span><span class="n">increment_build_number</span><span class="p">(</span>
+<span class="w">      </span><span class="ss">build_number</span><span class="p">:</span><span class="w"> </span><span class="n">latest_testflight_build_number</span><span class="p">(</span><span class="ss">api_key</span><span class="p">:</span><span class="w"> </span><span class="n">api_key</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># Build app ...</span>
+
+<span class="w">    </span><span class="c1"># Upload to Testflight</span>
+<span class="w">    </span><span class="n">pilot</span><span class="p">(</span>
+<span class="w">      </span><span class="ss">api_key</span><span class="p">:</span><span class="w"> </span><span class="n">api_key</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">skip_submission</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">skip_waiting_for_build_processing</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">ipa</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./builds/xxx.ipa&quot;</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<p>ビルド番号をインクリメントするときは、 <code>latest_testflight_build_number</code> の引数に <code>api_key</code> を指定する</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate build number</span>
+<span class="n">increment_build_number</span><span class="p">(</span>
+<span class="w">  </span><span class="ss">build_number</span><span class="p">:</span><span class="w"> </span><span class="n">latest_testflight_build_number</span><span class="p">(</span><span class="ss">api_key</span><span class="p">:</span><span class="w"> </span><span class="n">api_key</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>TestFlight へアップロードするときも、 <code>api_key</code> の引数をつける。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Upload to TestFlight</span>
+<span class="n">pilot</span><span class="p">(</span>
+<span class="w">  </span><span class="ss">api_key</span><span class="p">:</span><span class="w"> </span><span class="n">api_key</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">skip_submission</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">skip_waiting_for_build_processing</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">ipa</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./builds/xxx.ipa&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h2>Github Actions</h2>
+<ul>
+<li>リポジトリから Settings -&gt; Secrets を開く</li>
+<li>「New repository secret」からそれぞれ設定する<ul>
+<li><code>APPLE_STORE_CONNECT_KEY_ID</code>=&lt;KEY ID&gt;</li>
+<li><code>APPLE_STORE_CONNECT_ISSUER_ID</code>=&lt;Issuer ID&gt;</li>
+<li><code>APPLE_STORE_CONNECT_KEY_CONTENT</code>=&lt;.p8ファイルの中身&gt;</li>
+</ul>
+</li>
+</ul>
+<p>Github Actions の workflows の一例、fastlane のビルドと環境変数を記述する。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build and Deploy to App Store Connect</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">master</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">macos-latest</span>
+
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Select Xcode</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sudo xcode-select -switch /Applications/Xcode_12.4.app</span>
+
+<span class="w">    </span><span class="c1"># ...</span>
+
+<span class="w">    </span><span class="c1"># Build and upload to app store connect</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Fastlane - Deploy to AppStore Connect</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fastlane build_release</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">APPLE_KEY_BASE64</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.APPLE_KEY_BASE64 }}</span>
+<span class="w">        </span><span class="nt">APPLE_KEY_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.APPLE_KEY_PASSWORD }}</span>
+<span class="w">        </span><span class="nt">APPLE_STORE_CONNECT_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.APPLE_STORE_CONNECT_KEY_ID }}</span>
+<span class="w">        </span><span class="nt">APPLE_STORE_CONNECT_ISSUER_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.APPLE_STORE_CONNECT_ISSUER_ID }}</span>
+<span class="w">        </span><span class="nt">APPLE_STORE_CONNECT_KEY_CONTENT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.APPLE_STORE_CONNECT_KEY_CONTENT }}</span>
+<span class="w">        </span><span class="nt">PROVISIONING_PROFILE_BASE64</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.PROVISIONING_PROFILE_BASE64 }}</span>
+<span class="w">        </span><span class="nt">PROVISIONING_PROFILE_WATCHKIT_BASE64</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.PROVISIONING_PROFILE_WATCHKIT_BASE64 }}</span>
+<span class="w">        </span><span class="nt">PROVISIONING_PROFILE_WATCHKIT_EXTENSION_BASE64</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.PROVISIONING_PROFILE_WATCHKIT_EXTENSION_BASE64 }}</span>
+</code></pre></div><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

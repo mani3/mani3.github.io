@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>[mbed] mbed のオフライン環境をメモ | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/mbed-local-environment-memo.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="mbed のローカル環境を準備したときのメモ">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>[mbed] mbed のオフライン環境をメモ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2017-10-26T19:14:17+09:00">
+        <i class="fa fa-clock-o"></i>
+        Thu 26 October 2017
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/development.html">development</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/mbed.html">#mbed</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <p>mbed のオフラインでビルドする環境を用意したかったので試しました。</p>
+<p>基本的にはここにある方法を見て作業しました。</p>
+<ul>
+<li>https://os.mbed.com/users/MACRUM/notebook/mbed-offline-development/</li>
+</ul>
+<p>（2017/10/25 時点）</p>
+<h2>環境</h2>
+<ul>
+<li>macOS 10.12.6</li>
+<li>Xcode 9.0.1 インストール済み</li>
+</ul>
+<h2>GCC_ARM 準備</h2>
+<p><code>brew tap PX4/homebrew-px4</code> はエラーになってしまったので以下で行けた。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>brew<span class="w"> </span>tap<span class="w"> </span>PX4/px4
+$<span class="w"> </span>brew<span class="w"> </span>update
+$<span class="w"> </span>brew<span class="w"> </span>install<span class="w"> </span>gcc-arm-none-eabi
+</code></pre></div>
+
+<h2>Python 環境</h2>
+<p>Python 3.6 で <code>pip install mbed-cli</code> して、 <code>mbed import</code> したが以下のようなエラーが出てしまってうまくいかなかった。</p>
+<div class="highlight"><pre><span></span><code><span class="err">$</span> <span class="n">mbed</span> <span class="kn">import</span> <span class="nn">https</span><span class="p">:</span><span class="o">//</span><span class="n">developer</span><span class="o">.</span><span class="n">mbed</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">teams</span><span class="o">/</span><span class="n">mbed</span><span class="o">-</span><span class="n">os</span><span class="o">-</span><span class="n">examples</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">mbed</span><span class="o">-</span><span class="n">os</span><span class="o">-</span><span class="n">example</span><span class="o">-</span><span class="n">blinky</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;/Users/kazuyashida/anaconda3/bin/mbed&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">7</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">mbed.mbed</span> <span class="kn">import</span> <span class="n">main</span>
+  <span class="n">File</span> <span class="s2">&quot;/Users/kazuyashida/anaconda3/lib/python3.6/site-packages/mbed/mbed.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1065</span>
+    <span class="n">sorted_scms</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sorted_scms</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span> <span class="ow">not</span> <span class="n">m</span><span class="p">)</span>
+                                                 <span class="o">^</span>
+<span class="ne">SyntaxError</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">syntax</span>
+</code></pre></div>
+
+<p>普通に <a href="https://github.com/ARMmbed/mbed-cli">mbed-cli</a> に <code>It is not compatible with Python 3.</code> って書いてあった 😭</p>
+<p>mbed 用に Anaconda で Python 2.7 の環境を用意した。</p>
+<div class="highlight"><pre><span></span><code><span class="o">//</span> <span class="n">Python</span> <span class="mf">2.7</span> <span class="n">の環境作成</span>
+<span class="err">$</span> <span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">mbed</span> <span class="n">python</span><span class="o">=</span><span class="mf">2.7</span> <span class="n">anaconda</span>
+
+<span class="o">//</span> <span class="n">Python</span> <span class="mf">2.7</span> <span class="n">の環境に入る</span>
+<span class="err">$</span> <span class="n">source</span> <span class="n">activate</span> <span class="n">mbed</span>
+
+<span class="o">//</span> <span class="n">mbed</span><span class="o">-</span><span class="n">cli</span> <span class="n">をインストールする</span>
+<span class="p">(</span><span class="n">mbed</span><span class="p">)</span> <span class="err">$</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">mbed</span><span class="o">-</span><span class="n">cli</span>
+
+<span class="o">//</span> <span class="n">mbed</span> <span class="n">コマンドが使用できる</span>
+<span class="p">(</span><span class="n">mbed</span><span class="p">)</span> <span class="err">$</span> <span class="n">mbed</span> <span class="kn">import</span> <span class="nn">https</span><span class="p">:</span><span class="o">//</span><span class="n">developer</span><span class="o">.</span><span class="n">mbed</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">teams</span><span class="o">/</span><span class="n">mbed</span><span class="o">-</span><span class="n">os</span><span class="o">-</span><span class="n">examples</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">mbed</span><span class="o">-</span><span class="n">os</span><span class="o">-</span><span class="n">example</span><span class="o">-</span><span class="n">blinky</span>
+</code></pre></div>
+
+<h2>mbed os 2</h2>
+<p>今回 <a href="https://os.mbed.com/platforms/mbed-HRM1017/">mbed HRM1017</a> を使っていて、これが mbed os 2 だったので準備する。</p>
+<h3>空のプロジェクトを作成</h3>
+<p>普通に <code>mbed new</code> してしまうと mbed os 5 が落ちてきてしまったので <code>--create-only</code> で mbed-os や mbed library をインポートしないようする。</p>
+<div class="highlight"><pre><span></span><code>(mbed) $ mbed new hello-world --create-only
+(mbed) $ cd hello-world
+</code></pre></div>
+
+<p><a href="https://os.mbed.com/users/mbed_official/code/mbed-dev/">mbed-dev</a> をダウンロードしてくる</p>
+<div class="highlight"><pre><span></span><code>(mbed) $ curl -O https://os.mbed.com/users/mbed_official/code/mbed-dev/archive/af195413fb11.tar.gz
+(mbed) $ tar -pxvzf af195413fb11.tar.gz
+
+// なんとなくディレクトリ名を変更しておく
+(mbed) $ mv af195413fb11 mbed-dev
+</code></pre></div>
+
+<h2>Hello World を作成</h2>
+<p>以下のような <code>main.cpp</code> を作成する</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;mbed.h&quot;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello World!!</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>(mbed) $ ls
+af195413fb11.tar.gz main.cpp            mbed-dev            mbed_settings.py
+</code></pre></div>
+
+<h2>ビルド</h2>
+<div class="highlight"><pre><span></span><code><span class="c">(mbed) $ mbed detect</span>
+
+<span class="k">[</span><span class="c">mbed</span><span class="k">]</span><span class="c"> Detected HRM1017</span><span class="nt">,</span><span class="c"> port /dev/tty</span><span class="nt">.</span><span class="c">usbmodem1412</span><span class="nt">,</span><span class="c"> mounted /Volumes/MBED</span>
+<span class="k">[</span><span class="c">mbed</span><span class="k">]</span><span class="c"> Supported toolchains for HRM1017</span>
+<span class="nb">+--------+-----------+-----------+-----+---------+-----+-------+</span>
+<span class="c">| Target | mbed OS 2 | mbed OS 5 | ARM | GCC_ARM | IAR | ARMC6 |</span>
+<span class="nb">+--------+-----------+-----------+-----+---------+-----+-------+</span>
+<span class="nb">+--------+-----------+-----------+-----+---------+-----+-------+</span>
+<span class="c">Supported targets: 0</span>
+</code></pre></div>
+
+<p>ビルドする前に <code>mbed detect</code> してみたけど何もでない。けれど以下でビルドはできた。</p>
+<div class="highlight"><pre><span></span><code>(mbed) $ mbed compile -t GCC_ARM -m HRM1017
+Building project hello-world (HRM1017, GCC_ARM)
+
+...
+
+Image: ./BUILD/HRM1017/GCC_ARM/hello-world.hex
+
+
+// ファイルを mbed へコピーする
+(mbed) $ cp ./BUILD/HRM1017/GCC_ARM/hello-world.hex /Volumes/MBED/
+</code></pre></div>
+
+<p>screen 経由で Hello World!! が表示されることを確認してめでたく環境が準備できた 💃</p>
+<p>ここからがはじまりだけど、試行錯誤して疲れた</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

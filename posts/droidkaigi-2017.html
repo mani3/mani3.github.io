@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>DroidKaigi 2017 メモ | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/droidkaigi-2017.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="DoroidKaigi 2017 メモ">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>DroidKaigi 2017 メモ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2017-03-10T23:18:58+09:00">
+        <i class="fa fa-clock-o"></i>
+        Fri 10 March 2017
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/development.html">development</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/android.html">#android</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h1>DroidKaigi</h1>
+<h2>1日目</h2>
+<h3>逆引き マテリアル デザイン</h3>
+<p><code>10:40 ~ #DroidKaigi4</code></p>
+<ul>
+<li><a href="http://yaraki.github.io/slides/droidkaigi2017/">スライド</a></li>
+<li>CameraViewも作ってる</li>
+</ul>
+<h4>マテリアルデザイン</h4>
+<ul>
+<li>ガイドライン<ul>
+<li>Adobe After Efectでつくった動画</li>
+<li>絶対従わないといけないものではない</li>
+<li>概念の上に自分のUIを作っていく</li>
+<li>随時更新されてる <a href="https://material.io/guidelines/material-design/whats-new.html">What's New</a> で更新内容を確認できる</li>
+<li><a href="https://material.io/jp/guidelines/">日本語版のガイドライン</a></li>
+<li>余談 <a href="https://material.io/guidelines/style/typography.html#typography-styles">Typographyのページ</a><ul>
+<li>Jonathan Lee (material design偉い人)<ul>
+<li>織田信長扱いｗｗ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>マテリアルデザインと言えばアニメーション</li>
+</ul>
+<h4>Components</h4>
+<ul>
+<li>FAB<ul>
+<li>影、アニメーション、ガイドライン通りの動作</li>
+<li>右下でなくても良い</li>
+<li>サポートライブラリではできないのでガイドラインに従ってほしいこと<ul>
+<li>主要なアクションで使う -&gt; ガイドラインに記載</li>
+<li>リストの一番下が隠れないようにpaddingいれるとか</li>
+</ul>
+</li>
+<li>これは開発者が任意で行うもので、サポートライブラリではどうしようもないので、開発者がガイドラインに従う必要がある </li>
+</ul>
+</li>
+<li>Grid Lists<ul>
+<li><code>android:foreground="?attr/selectableItemBackground"</code></li>
+<li>タッチフィードバックのないアプリが多い</li>
+<li>押せたということがユーザにわかるように</li>
+<li>Android 6.0以下で使う場合、ForegroundLinearLayout で検索</li>
+</ul>
+</li>
+<li><a href="https://plus.google.com/+AndroidDevelopers/posts/Z1Wwainpjhd">Patterns Launch Screen</a><ul>
+<li>ブランディング画面を表示</li>
+<li>コンテンツを表示するのが最優先</li>
+<li>やりかた<ul>
+<li>style で背景として設定する</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>カスタマイズ</h4>
+<ul>
+<li>スタイルとテーマの違いがわかればよい？</li>
+<li><code><a href="https://twitter.com/style">@style</a>/foobar</code>、 <code>?attr/foobar</code></li>
+<li>スタイル<ul>
+<li><code>styles.xml</code><ul>
+<li><code>parent</code> は明示的な継承</li>
+<li><code>parent</code> を書かない場合、暗黙的な継承</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>テーマ<ul>
+<li><code>themes.xml</code> Key-Valueマップ style と同じ</li>
+<li>テーマ内の属性を参照できる</li>
+<li><code>?attr/actionBarSize</code> キーで取ってこれる    </li>
+</ul>
+</li>
+<li>Text Field<ul>
+<li>エラーテキストカラーを変更する場合</li>
+<li><a href="https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html">TextInputLayout</a></li>
+<li><code>styles.xml</code> に <code>TextAppearance.Design.Error</code> を継承して値を設定する</li>
+<li><code>app.errorTextAppearance</code> 特殊なスタイル<ul>
+<li><code>support/design/res/values/styles.xml</code> を見る</li>
+<li><code>support/design/res/color/design_error.xml</code> を見るとテーマから取得してることができる</li>
+<li><code>textColorError</code> をテーマとしてつかえばよさそう</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Animation</h4>
+<ul>
+<li>View同士を協調して動かす<ul>
+<li>Elevation dp<ul>
+<li>どのコンポーエントがどの高さか書いてある</li>
+<li>FAB と Snackbar が <code>8dp</code> -&gt; 被ってはいけない</li>
+<li>FAB を CoordinatorLayout をつかえばあってに避けてくれる</li>
+</ul>
+</li>
+<li><code>app:layout_dodgeInsetEdges</code> を使えば、 FAB と同じように避けてくれる</li>
+<li><code>app:layout_insetEdge</code> を使えば、 Snackbar と同じように避けてくれる</li>
+<li><code>app:layout_anchor</code> , <code>app:layout_anchor_gravity</code> , <code><a href="https://twitter.com/id">@id</a>/_bottooom_sheet</code> に追従して動く</li>
+</ul>
+</li>
+<li>状態の変化を動かす<ul>
+<li>Motion<ul>
+<li>画像が拡大縮小する例</li>
+</ul>
+</li>
+<li>Transition - Activityだけではない</li>
+<li>19 Kitkat で導入</li>
+<li><code>TransitionManager.beginDelayedTransition</code> を使えばできる<ul>
+<li>root以下の 今のViewの状態を保存する</li>
+<li>root以下の propertiyが変更されたことを検知</li>
+<li>その差分をアニメーションする</li>
+</ul>
+</li>
+<li><code>ChangeBounds</code> は位置や大きさを検知・アニメーションする</li>
+<li><a href="https://material.io/guidelines/motion/choreography.html#">Choreography</a> -&gt; こうゆうアニメーションがいいですよ<ul>
+<li>arcに従ってアニメーションする場合: <code>PathMotion</code></li>
+<li>複数のアニメーション <code>TransitionPropagation</code> 、startDelayで細かく調整</li>
+<li>この２つはまだ Support library に入ってない</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Android Security 最前線！！</h3>
+<p><code>11:50 ~ #DroidKaigi3</code></p>
+<ul>
+<li>Naoki Yano: Yahoo 株式会社</li>
+<li>Nougat は security周りのアップデートがいっぱい</li>
+</ul>
+<h4>using scoped directory access</h4>
+<ul>
+<li>Android 6以前<ul>
+<li>外部ストレージへすべてアクセス許可されてしまう</li>
+</ul>
+</li>
+<li>7.0<ul>
+<li>strageVollumeを作成してリクエスト</li>
+<li>特定のディレクトリのみアクセス</li>
+<li>StorageVolume</li>
+<li>StorageManageer - volumeを取得するもの</li>
+<li>sv.createAccessIntentでユーザに許可をだす<ul>
+<li>privmaryストレージかどうかで挙動が変わる<ul>
+<li>primaryストレージのときのみ気をつける</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>許可ダイアログ - OpenExternalDirectoryActivity</li>
+<li>Target API低くアプリも影響を受ける</li>
+</ul>
+</li>
+</ul>
+<h4>direct boot</h4>
+<ul>
+<li>Android 6以前<ul>
+<li>端末が暗号化されている場合アンロックが必要</li>
+</ul>
+</li>
+<li>7.0<ul>
+<li>アンロック前にアクセスする場合ダイレクトブートモードで動作する</li>
+</ul>
+</li>
+<li><code>android:directBootAware</code>: 暗号化ストレージに対応</li>
+<li><code>BOOT_COMPLETED</code> (6以下), `LOCKED_BOOT_COMPLETED (7以上) 使用可能の通知ブロードキャストされる     </li>
+<li>Context#createDevieProtectedStorageContext()でアクセス</li>
+<li>7以上でもBOOT_COMPLETED呼ばれるがunlock後に呼ばれる</li>
+<li><code>ApplicationInfo#deviceProtectedDataDir</code></li>
+</ul>
+<h4>network security config</h4>
+<ul>
+<li>7.0以上<ul>
+<li>カスタムCA証明書を使うための簡単なAPI</li>
+<li>デフォルトはユーザが追加したCAは使われない</li>
+</ul>
+</li>
+<li><code>network-security-config</code><ul>
+<li><code>domain-config</code>, <code>trust-anchors</code>, <code>certificates</code> でCAファイルを指定</li>
+<li><code>network-security-config</code> はマニフェストに追加必要</li>
+<li><code>debug-override</code> でdebugのときのCAの切り替えも可能</li>
+<li><code>baes-config</code> もある</li>
+</ul>
+</li>
+<li>android 7 default<ul>
+<li>base-config - trust-anchors - cert system のみ</li>
+<li>6未満と同じにしたい userを追加する</li>
+</ul>
+</li>
+<li>設定アプリからCAを入れる必要がなくなった</li>
+</ul>
+<h3>Androidリアルタイム通信アプリ作成Tips</h3>
+<p><code>12:40 ~ #DroidKaigi3</code></p>
+<ul>
+<li><a href="https://speakerdeck.com/srym/android-realtime-library">スライド</a></li>
+<li>Fumihiko Shinoyama<ul>
+<li>セッション始まる前に、懸垂万能説について語ってた</li>
+<li>3つの比較</li>
+</ul>
+</li>
+</ul>
+<h4>WebSocket</h4>
+<ul>
+<li><a href="https://tools.ietf.org/html/rfc6455">rfc</a></li>
+<li>websocket リクエスト HTTPの拡張</li>
+<li>OkHttp 3.5 が websocket サポート</li>
+<li>バイナリをサポート</li>
+<li><code>ws://</code>, <code>wss://</code> で OkHttp を初期化するだけ</li>
+<li>socket.ioは roomとかの実装があり、wsはないので実装が必要ブロードキャストも</li>
+<li>server でフックできる</li>
+<li>Radis pub/sub - わりとやり方が確立されてる</li>
+</ul>
+<h4>Firebase Realtime Database</h4>
+<ul>
+<li>ローカルのデータベースに書き込んで、同期してる</li>
+<li>同期されたことが通知される</li>
+<li>security rules が定義が簡単にできる</li>
+<li>Android<ul>
+<li>AS Firebase Pluginで簡単</li>
+<li>google-services.jsonも自動</li>
+<li>push(): メッセージのユニークIDがつく</li>
+</ul>
+</li>
+<li>能動的に取得する場合</li>
+<li>ValueEvent をなんとかする</li>
+<li>タイムスタンプは-1を掛けて逆順にしておく(Tips)</li>
+<li>オフラインサポート</li>
+<li>バイナリのサポートなし</li>
+<li>Server側でフックできない分、定期巡回が必要</li>
+</ul>
+<h4>Realm</h4>
+<ul>
+<li>Realm mobile Database<ul>
+<li>getter&amp;setterはmust</li>
+<li>RealmResult: ライブオブジェクト</li>
+<li>変更の通知もある</li>
+</ul>
+</li>
+<li>Realm object server<ul>
+<li>Developer Edition is Free</li>
+<li><code>RealmRecyclerViewAdapter</code> を使うと最初に一覧を取得するだけで、データが更新されれば自動でViewに反映される</li>
+</ul>
+</li>
+<li>Firebaseとは異なり、クエリ・リレーションがあり</li>
+<li>pro版だとサーバ側でフックできる</li>
+<li>Realmがおすすめ</li>
+</ul>
+<h3>Data Bindingで開発を気持ちよくしよう</h3>
+<p><code>12:40 ~ #DroidKaigi3</code></p>
+<ul>
+<li>
+<p><a href="https://speakerdeck.com/oldergod/the-data-binding-library">スライド</a></p>
+</li>
+<li>
+<p>データとUIを接続してくれる</p>
+</li>
+<li>XMLもカスタムできる</li>
+<li>dataBinding 有効 build.grade</li>
+<li>DataBindingUtil.setcontentViewを使うだけ</li>
+<li>modelのデータを反映<ul>
+<li>@{} だけ</li>
+<li>デフォルトのテキスト @{ ?? }</li>
+<li><a href="https://twitter.com/string">@string</a> もそのまま使える</li>
+<li>@{ showScore.checked ? Voew.Visible :    } viewのIDがそのまま使える</li>
+<li>app:ImageResourcesが使える</li>
+</ul>
+</li>
+<li>イベント<ul>
+<li>bootomnavigation</li>
+<li>@{}</li>
+</ul>
+</li>
+<li>XMMLでデータを定義する <layout> の中</li>
+<li>UI Update<ul>
+<li>モデルに定義</li>
+<li>BaseObserveable を付ける</li>
+<li>notifyPreopertyChangeedを呼ぶだけ</li>
+</ul>
+</li>
+<li>View -&gt; Model<ul>
+<li>@={} を使うだけ</li>
+</ul>
+</li>
+<li>中では<ul>
+<li>zero relection</li>
+<li>bitwise フラグで冠されてる</li>
+<li>getなくても書ける</li>
+<li>get is has は略して書ける</li>
+</ul>
+</li>
+<li>custom<ul>
+<li>app:imageUrl</li>
+<li>@BindingAdapterを掛けばOK</li>
+<li>@{} の中で計算もできる</li>
+<li>ラムダも使える</li>
+</ul>
+</li>
+<li>NPさよなら<ul>
+<li>nilが発生しても空文字に解釈される</li>
+</ul>
+</li>
+<li>syntax highlighting</li>
+<li>AS Tips<ul>
+<li>layout にnamepaseをいれる</li>
+<li>UIでtoolsで値が入った状態でプレビューできる</li>
+</ul>
+</li>
+<li>DataBinding最高</li>
+<li>サンプルコード<ul>
+<li>oldergod/DataBindingDemo</li>
+<li>資料の手順ごとにブランチが切ってある</li>
+</ul>
+</li>
+<li>質問<ul>
+<li>欠点</li>
+<li>デバッグに苦労はする（DataBindingのエラーがたくさん出る）</li>
+<li>BaseObservable</li>
+<li>BR.match 定数を見つけられない -&gt; ビルドができる</li>
+<li>最近は ObservableField を使う</li>
+<li>Listの増減</li>
+<li>ObservableListを使ってる</li>
+</ul>
+</li>
+</ul>
+<h3>解剖Kotlin ~バイトコードを読み解く~</h3>
+<p><code>15:10 ~ #DroidKaigi4</code></p>
+<ul>
+<li>トクバイアプリ - Kotlin 100%</li>
+<li>Javaバイトコードをみてkotlinがイメージできれば怖くない</li>
+<li>Kotlin デコンパイルしてくれるPluginがある</li>
+<li>前半<ul>
+<li>null許容型</li>
+<li>var name: String? = null ?: nullあり</li>
+<li>var name: String = "" nullなし</li>
+<li>str?.length</li>
+<li>str!!.length</li>
+<li>引数もnull許容かどうか明示される</li>
+<li>text? let { }</li>
+<li>?: Javaコードを見るとnullチェックしてるだけ</li>
+<li>!!: exeption</li>
+<li>特にすごいことをやってない</li>
+<li>関数型</li>
+<li>var onClick: (view) -&gt; Unit</li>
+<li>ラムダ式、関数リテラル<ul>
+<li>Function2)null.</li>
+<li>バイトコードを読む必要がある</li>
+<li>singletonを内部で作ってる</li>
+</ul>
+</li>
+<li>クロージャ<ul>
+<li>無名クラスをnewしてるだけ</li>
+<li>中に変数がある場合、 IntRefみたいなコンテナが生成されるだけ</li>
+</ul>
+</li>
+<li>Java8のやり方とほとんど同じ</li>
+<li>拡張関数</li>
+<li>対象のクラスの第一引数該当のクラスを指定されるstatic関数</li>
+<li>ExtensionUK</li>
+<li>
+<h2>プロパティ</h2>
+<code></code></li>
+<li>バッキングフィールド</li>
+<li>val == let</li>
+<li>まとめ</li>
+<li>Kotlinは全然難しいことをしてない</li>
+</ul>
+</li>
+<li>設計<ul>
+<li>null</li>
+<li>text?.let { semitransparent(it) }</li>
+<li>data binding または kotlin android extension を使う方向</li>
+<li>null安全の設計を考えられる</li>
+<li>拡張関数</li>
+<li>静的関数Utils群をちゃんと運用するだけでも・・</li>
+</ul>
+</li>
+<li>まとめ<ul>
+<li>ボイラープレートコードを隠蔽してくれる</li>
+</ul>
+</li>
+</ul>
+<h3>オフラインファーストなアプリケーション開発</h3>
+<p><code>16:00 ~ #DroidKaigi3</code></p>
+<ul>
+<li><a href="https://twitter.com/zaki50">@zaki50</a></li>
+<li>
+<p>Realm / uPhyca Inc</p>
+<ul>
+<li>オフラインファースト</li>
+<li>Webの考え方</li>
+<li>ブラウザがローカルにストレージを持てるようになってから<ul>
+<li>以前はcookie、google gear(JS)</li>
+</ul>
+</li>
+<li>デスクトップの利用時間はかわらない</li>
+<li>mobile app の利用時間が増えている
+→オフラインの必要性</li>
+<li>gmailとか、オフラインでも利用できる</li>
+<li>サーバ通信</li>
+<li>object -&gt; json -&gt; sarver object</li>
+<li>図がわかりやすそう</li>
+<li>データベースの課題</li>
+<li>オフライン用とオンライン用の実装が必要</li>
+<li>データ同期</li>
+<li>結構難しい問題が多い</li>
+<li>Realm的解決</li>
+<li>この3つの課題はRealmが解決してくれる</li>
+<li>Realm Mobile Platform</li>
+<li>オフライン時の変更衝突を自動解決してくれる<ul>
+<li>デフォルトがかなり賢い（カスタムも可能）</li>
+</ul>
+</li>
+<li>同期以上の使い方もできる<ul>
+<li>サーバ側で validation()</li>
+<li>アプリはローカルDBに保存するだけ</li>
+</ul>
+</li>
+<li>デモ</li>
+<li>Realm Mobile Database</li>
+<li>データの買い込みする場合は executeTransactionが必ず必要あり</li>
+<li>REalmResultを作っただけでは読み込みは行われない<ul>
+<li>フィールドにアクセスしたタイミングで読み込みが発生する</li>
+</ul>
+</li>
+<li>更新/削除: フィールドに値を入れるだけ</li>
+<li>変更通知<ul>
+<li>AddChangeListenerがある</li>
+<li>SQLiteでやろうとしたらEventを関しを書いておく必要がある。。確かに</li>
+<li>Server からの同期も同じロジックでできる</li>
+<li>seveerに対してユーザ認証・syncConfigurationは必要</li>
+</ul>
+</li>
+<li>デモ</li>
+<li>衝突解決(デフォルト)<ul>
+<li>削除は優先</li>
+<li>同じプロパティは編集あとがち</li>
+<li>リストへの挿入は時間順</li>
+<li>Operational Transform</li>
+</ul>
+</li>
+<li>CAP定理<ul>
+<li>consistency</li>
+<li>Availabilty</li>
+<li>partition Tolerance</li>
+<li>2つまでしか同時に満たすことができない(2000)</li>
+</ul>
+</li>
+<li>一貫性<ul>
+<li>同じ結果が見える</li>
+</ul>
+</li>
+<li>寛容性<ul>
+<li>残った者でなんとかする</li>
+<li>なにかがなければ動かない</li>
+</ul>
+</li>
+<li>分断耐性
+    -</li>
+<li>一般的なRDS: 1.2.</li>
+<li>Apache HBase, MongoDB: 1,3</li>
+<li>DNSなど Realm Mobile Platform 2, 3</li>
+<li>一貫性を保証しない -<ul>
+<li>Eventual Consistency - いつかは一貫したデータになる</li>
+<li>Strong Eventual Consistency</li>
+<li>Strongがつくと常に同じ結果になる</li>
+</ul>
+</li>
+<li>難しいことはRMPに任せる</li>
+<li>Developer Editionは商用で使ってもらっても大丈夫</li>
+<li>マイグレーションについて</li>
+<li>分散の場合、削除・更新はできない。プロパティの追加はマイグレーションされる</li>
+<li>削除するものは一定期間は残すとか運用を考えてほしい</li>
+<li>ローカルのみはご自由に</li>
+<li>オフラインかどうか通知する方法</li>
+<li>現在はない</li>
+<li>clean architecture?</li>
+<li>cellerのときwifiのときの通信</li>
+</ul>
+</li>
+<li></li>
+</ul>
+<h3>Reverse engineering is not just for hackers!</h3>
+<p><code>17:10 ~ #DroidKaigi5</code></p>
+<ul>
+<li>
+<p><a href="https://speakerdeck.com/jonreeve/reverse-engineering-is-not-just-for-hackers">スライド</a></p>
+</li>
+<li>
+<p>Jon Reeve <a href="https://twitter.com/themighttyjon">@themighttyjon</a></p>
+<ul>
+<li>adb shell pm list packages -f -3</li>
+<li>aapt</li>
+<li>in Android SDK</li>
+<li>aapt dum dadgin my.apk</li>
+<li>xml, stringsのしてできる</li>
+<li>The APK</li>
+<li>META-INF: certificate, signature file hashes to veerify origin adn integrify</li>
+<li>resources arse compiled res</li>
+<li>classes dex: Dalvik Executable - JVM</li>
+<li>lib: native code</li>
+<li>apktool</li>
+<li>ibotpeaches.github.io/Apktool</li>
+<li>rebuild for debug<ul>
+<li>jarsigner -verbose -signed ~</li>
+</ul>
+</li>
+<li>androguard</li>
+<li>python androlyzer.py -s</li>
+<li>iPython</li>
+<li>other tools</li>
+<li>ClassyShark<ul>
+<li>android-classyshark</li>
+<li>GUI and CLI</li>
+<li>dex method counts, package stucture, size</li>
+<li>.dex, .so...</li>
+</ul>
+</li>
+<li>radare2</li>
+<li>Play Store Apps<ul>
+<li>JaDX</li>
+<li>Show Java</li>
+</ul>
+</li>
+<li>Santoku<ul>
+<li>santoku-linux.com/features</li>
+</ul>
+</li>
+<li>IDA Pro</li>
+<li>CodeInspect</li>
+<li>JEB / JEB2</li>
+<li>
+<h2>Security</h2>
+</li>
+<li>goo.gl/Cy96UO</li>
+</ul>
+</li>
+</ul>
+<h3>What's New in RxJava 2.0</h3>
+<p><code>18:00 ~ #DroidKaigi3</code></p>
+<ul>
+<li><a href="https://speakerdeck.com/hkurokawa/whats-new-in-rxjava-2">スライド</a></li>
+<li>RxJava2<ul>
+<li>Reactive Streams に対応 - 何かの仕様</li>
+<li>Java 9 Flow API としての動き</li>
+<li>非同期の処理のスタンダード</li>
+<li>publisher subscriber subscription proessor</li>
+<li>オペレータには含まれていない(filter)</li>
+<li>subscriptionを使うとpublisherにどのデータがほしいかリクエストできる<ul>
+<li>requestとcancelがある</li>
+</ul>
+</li>
+<li>onnextにnullは返せない</li>
+<li>pcessor ?</li>
+<li>backpressure<h2>- ない場合</h2>
+<ul>
+<li>OutMemoryErrorがお消える</li>
+<li>ある</li>
+</ul>
+</li>
+<li>package rx -&gt; io.~</li>
+<li>backpressure-aware対応メソッドと非対応メソッドの2種類存在</li>
+<li>observable</li>
+<li>flowable (bpあり)</li>
+<li>Avoid null</li>
+<li>Reactive Streams 対応メリット</li>
+<li>Akka, Actorと統合できる</li>
+<li>Java 9</li>
+</ul>
+</li>
+<li>Sngle maybe completable<ul>
+<li>必ず1つ値を返すもの: sibgle</li>
+<li>0固化1つか: meybe</li>
+<li>0個返す: completable</li>
+</ul>
+</li>
+<li>performance imprevement<ul>
+<li>BPがなくなったからとか</li>
+</ul>
+</li>
+<li>RxJava2 以降が必要か？<ul>
+<li>1は2017まで、2018 Marchまで</li>
+<li>Sngle maybe completableはわかりやすい</li>
+<li>RxAndroid、Retrofit、RxBinding 対応済み</li>
+<li>RxJava2interop</li>
+</ul>
+</li>
+<li>移行するときは<ul>
+<li>Read What's different in 2.0を読む</li>
+<li>どうしてもnullがつらいときはシングルのenumを返すとか</li>
+<li>Search Structurally</li>
+<li>nullチェックしている箇所を検索できる</li>
+<li>map に気をつける</li>
+<li>RxJava1の便利メソッドを使いたいときはRxJava2Extension使う</li>
+</ul>
+</li>
+<li>まとめ<ul>
+<li>RxJava2に移行してみたらどうでしょうか。</li>
+</ul>
+</li>
+<li>hkurokawa: speakerdeck</li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

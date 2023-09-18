@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Raspberry Pi Zero W と照度センサー | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/raspberrypi-zero-w-bh1705-memo.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Rasberry Pi Zero W と GY-302 の前準備めも">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Raspberry Pi Zero W と照度センサー
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2018-03-23T23:14:31+09:00">
+        <i class="fa fa-clock-o"></i>
+        Fri 23 March 2018
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/raspberrypi.html">raspberrypi</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/raspberry-pi.html">#raspberry pi</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h3>前準備</h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>-y<span class="w"> </span>update
+$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>-y<span class="w"> </span>upgrade
+$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python-smbus<span class="w"> </span>i2c-tools
+</code></pre></div>
+
+<h3>照度センサー</h3>
+<ul>
+<li><a href="http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf">BH1750 datasheet</a></li>
+</ul>
+<h3>I2C を有効にする</h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>raspi-config
+
+//<span class="w"> </span>設定できたら再起動
+$<span class="w"> </span>sudo<span class="w"> </span>reboot
+</code></pre></div>
+
+<p><img src="../posts/images/raspi-config.jpg" alt="raspi-config" width="640">
+<img src="../posts/images/raspi-config-2.jpg" alt="raspi-config-2" width="640"></p>
+<h4><code>/boot/config.txt</code> の 差分</h4>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>diff<span class="w"> </span>/boot/config.txt<span class="w"> </span>/boot/config.txt.origin
+46c46
+&lt;<span class="w"> </span><span class="nv">dtparam</span><span class="o">=</span><span class="nv">i2c_arm</span><span class="o">=</span>on
+---
+&gt;<span class="w"> </span><span class="c1">#dtparam=i2c_arm=on</span>
+</code></pre></div>
+
+<p><a href="https://www.raspberrypi-spy.co.uk/2015/03/bh1750fvi-i2c-digital-light-intensity-sensor/">ここ</a>にある通り配線してから、
+<code>i2cdetect</code> を叩いてデバイスのアドレス <code>0x23</code> を確認する</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>i2cdetect<span class="w"> </span>-y<span class="w"> </span><span class="m">1</span>
+<span class="w">     </span><span class="m">0</span><span class="w">  </span><span class="m">1</span><span class="w">  </span><span class="m">2</span><span class="w">  </span><span class="m">3</span><span class="w">  </span><span class="m">4</span><span class="w">  </span><span class="m">5</span><span class="w">  </span><span class="m">6</span><span class="w">  </span><span class="m">7</span><span class="w">  </span><span class="m">8</span><span class="w">  </span><span class="m">9</span><span class="w">  </span>a<span class="w">  </span>b<span class="w">  </span>c<span class="w">  </span>d<span class="w">  </span>e<span class="w">  </span>f
+<span class="m">00</span>:<span class="w">          </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">10</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">20</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span><span class="m">23</span><span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">30</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">40</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">50</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">60</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+<span class="m">70</span>:<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--<span class="w"> </span>--
+</code></pre></div>
+
+<h3>サンプルコードを実行</h3>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>サンプルコードをダウンロード
+$<span class="w"> </span>wget<span class="w"> </span>https://bitbucket.org/MattHawkinsUK/rpispy-misc/raw/master/python/bh1750.py
+
+
+//<span class="w"> </span>サンプルコードを実行
+$<span class="w"> </span>python<span class="w"> </span>bh1750.py
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">7</span>.5<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">7</span>.5<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>.83333333333<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>.83333333333<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">248</span>.333333333<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">254</span>.166666667<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">255</span>.0<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">268</span>.333333333<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">273</span>.333333333<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">274</span>.166666667<span class="w"> </span>lux
+Light<span class="w"> </span>Level<span class="w"> </span>:<span class="w"> </span><span class="m">268</span>.333333333<span class="w"> </span>lux
+</code></pre></div>
+
+<h3>参考</h3>
+<ul>
+<li>https://www.raspberrypi-spy.co.uk/2015/03/bh1750fvi-i2c-digital-light-intensity-sensor/</li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

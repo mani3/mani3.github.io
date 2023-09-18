@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Node.js - Environment Setup | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/node-env.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Node.jsの開発環境セットアップ">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Node.js - Environment Setup
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2015-10-19T00:01:28+09:00">
+        <i class="fa fa-clock-o"></i>
+        Mon 19 October 2015
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/development.html">development</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/nodejs.html">#nodejs</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h1>Node.js - Environment Setup</h1>
+<h2>Install nvm</h2>
+<p>環境：MacOSX 10.10 Yotemise</p>
+<ol>
+<li>
+<p><em>Homebrew</em> からインストール</p>
+<p><code>$ brew install nvm</code></p>
+</li>
+<li>
+<p><em>.nvm</em> ディレクトリ作成</p>
+<p><code>$ mkdir ~/.nvm</code></p>
+</li>
+<li>
+<p>~/.zshrc に追加</p>
+<p><code>export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh</code></p>
+</li>
+</ol>
+<h2>Install Node.js</h2>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>nvm<span class="w"> </span>install<span class="w"> </span>v4.2.1
+$<span class="w"> </span>node<span class="w"> </span>-v
+v4.2.1
+$<span class="w"> </span>npm<span class="w"> </span>-v
+<span class="m">2</span>.14.7
+</code></pre></div>
+
+<hr>
+<p><em>nvm</em> を使ってバージョン切り替えできるが，
+<em>Python</em> でいうところの <em>virtualenv</em> みたいな感じで使いたいので，
+<a href="https://github.com/ekalinin/nodeenv"><em>nodeenv</em></a> を試しに使ってみる</p>
+<h2>Install nodeenv</h2>
+<p>いつものような感じで，Python の仮想環境を準備する．</p>
+<ul>
+<li>python-env.sh</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#! /usr/bin/env sh</span>
+<span class="c1">#</span>
+<span class="c1"># Setup virtualenv</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$#</span><span class="w"> </span>-ne<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nv">command</span><span class="o">=</span><span class="sb">`</span>basename<span class="w"> </span><span class="nv">$0</span><span class="sb">`</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="si">${</span><span class="nv">command</span><span class="si">}</span><span class="s2"> &lt;enviroment name&gt;&quot;</span><span class="w"> </span><span class="m">1</span>&gt;<span class="p">&amp;</span><span class="m">2</span>
+<span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nv">ENV_NAME</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">VIRTUALENV</span><span class="o">=</span><span class="s2">&quot;virtualenv-1.10.1&quot;</span>
+
+<span class="c1"># Download ez_setup.py</span>
+curl<span class="w"> </span>-O<span class="w"> </span>https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+
+<span class="c1"># Download virtualenv</span>
+curl<span class="w"> </span>-O<span class="w"> </span>https://pypi.python.org/packages/source/v/virtualenv/<span class="si">${</span><span class="nv">VIRTUALENV</span><span class="si">}</span>.tar.gz
+tar<span class="w"> </span>xvfz<span class="w"> </span><span class="si">${</span><span class="nv">VIRTUALENV</span><span class="si">}</span>.tar.gz
+cp<span class="w"> </span><span class="si">${</span><span class="nv">VIRTUALENV</span><span class="si">}</span>/virtualenv.py<span class="w"> </span>virtualenv.py
+rm<span class="w"> </span>-rf<span class="w"> </span><span class="si">${</span><span class="nv">VIRTUALENV</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">VIRTUALENV</span><span class="si">}</span>.tar.gz
+
+<span class="c1"># Setup virtualenv</span>
+python<span class="w"> </span>virtualenv.py<span class="w"> </span><span class="si">${</span><span class="nv">ENV_NAME</span><span class="si">}</span>
+<span class="si">${</span><span class="nv">ENV_NAME</span><span class="si">}</span>/bin/python<span class="w"> </span>ez_setup.py
+<span class="si">${</span><span class="nv">ENV_NAME</span><span class="si">}</span>/bin/easy_install<span class="w"> </span>pip
+
+<span class="si">${</span><span class="nv">ENV_NAME</span><span class="si">}</span>/bin/pip<span class="w"> </span>install<span class="w">  </span>nodeenv
+
+<span class="c1"># Cleanup</span>
+rm<span class="w"> </span>ez_setup.py*<span class="w"> </span>virtualenv.py*<span class="w"> </span>setuptools*.zip
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;You can use virtualenv by typing \&quot;source </span><span class="si">${</span><span class="nv">ENV_NAME</span><span class="si">}</span><span class="s2">/bin/activate\&quot;.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Disable virtuallenv \&quot;deactivate\&quot;.&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">// バージョン</span>
+$<span class="w"> </span><span class="n">python</span><span class="w"> </span><span class="o">--</span><span class="n">version</span>
+<span class="mf">2.7</span><span class="p">.</span><span class="mi">9</span>
+
+<span class="c1">// Python 仮想環境を準備</span>
+$<span class="w"> </span><span class="o">./</span><span class="n">python</span><span class="o">-</span><span class="n">env</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="n">env</span>
+$<span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">env</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">activate</span>
+
+<span class="c1">// Nodeの新しい仮想環境を作る</span>
+<span class="c1">// 最新バージョンのNode.js がインストールされます</span>
+<span class="p">(</span><span class="n">env</span><span class="p">)</span>$<span class="w"> </span><span class="n">nodeenv</span><span class="w"> </span><span class="n">nodeenv</span>
+<span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Install</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="p">(</span><span class="mf">4.2</span><span class="p">.</span><span class="mi">1</span><span class="p">)...</span><span class="w"> </span><span class="n">done</span><span class="p">.</span>
+<span class="p">(</span><span class="n">env</span><span class="p">)</span>$<span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">nodeenv</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">active</span>
+
+<span class="c1">// node のバージョン</span>
+<span class="p">(</span><span class="n">nodeenv</span><span class="p">)(</span><span class="n">env</span><span class="p">)</span>$<span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">-</span><span class="n">v</span>
+<span class="n">v4</span><span class="p">.</span><span class="mf">2.1</span>
+<span class="p">(</span><span class="n">nodeenv</span><span class="p">)(</span><span class="n">env</span><span class="p">)[</span><span class="n">node</span><span class="o">-</span><span class="n">env</span><span class="p">]</span><span class="w"> </span><span class="n">npm</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span>
+<span class="mf">2.14</span><span class="p">.</span><span class="mi">7</span>
+</code></pre></div>
+
+<p>おもしろいのは <em>nodeenv</em> で <em>requirements.txt</em> ファイルを作ることができる</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 仮想環境内にインストールされる</span>
+<span class="p">(</span><span class="n">nodeenv</span><span class="p">)(</span><span class="n">env</span><span class="p">)</span><span class="n">$</span><span class="w"> </span><span class="n">npm</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">tsc</span><span class="w"> </span><span class="n">tsd</span><span class="w"> </span><span class="o">-</span><span class="n">g</span>
+
+<span class="c1">// requirements.txt を作成する</span>
+<span class="p">(</span><span class="n">nodeenv</span><span class="p">)(</span><span class="n">env</span><span class="p">)</span><span class="n">$</span><span class="w"> </span><span class="n">freeze</span><span class="w"> </span><span class="n">requirements</span><span class="p">.</span><span class="n">txt</span>
+<span class="p">(</span><span class="n">nodeenv</span><span class="p">)(</span><span class="n">env</span><span class="p">)[</span><span class="n">node</span><span class="o">-</span><span class="n">env</span><span class="p">]</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">requirements</span><span class="p">.</span><span class="n">txt</span><span class="w"> </span>
+<span class="n">tsc</span><span class="mf"><a href="https://twitter.com/1">@1</a>.20150623.0</span>
+<span class="n">tsd</span><span class="mf"><a href="https://twitter.com/0">@0</a>.6.5</span>
+</code></pre></div>
+
+<p>使うときは <em>nodeenv</em> で仮想環境を作るときに指定する</p>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nx">nodeenv</span><span class="p">)(</span><span class="nx">env</span><span class="p">)</span><span class="err">$</span><span class="w"> </span><span class="nx">nodeenv</span><span class="w"> </span><span class="o">--</span><span class="nx">node</span><span class="p">=</span><span class="m m-Double">0.12.7</span><span class="w"> </span><span class="o">--</span><span class="nx">requirements</span><span class="p">=</span><span class="nx">requirements</span><span class="p">.</span><span class="nx">txt</span><span class="w"> </span><span class="nx">nodeenv</span><span class="o">-</span><span class="m m-Double">0.1</span><span class="mi">2</span>
+<span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">Install</span><span class="w"> </span><span class="nx">node</span><span class="w"> </span><span class="p">(</span><span class="m m-Double">0.12.7</span><span class="p">)</span><span class="o">...</span><span class="w"> </span><span class="nx">done</span><span class="p">.</span>
+<span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">Install</span><span class="w"> </span><span class="nx">node</span><span class="p">.</span><span class="nx">js</span><span class="w"> </span><span class="nx">packages</span><span class="w"> </span><span class="o">...</span><span class="w"> </span><span class="nx">done</span><span class="p">.</span>
+</code></pre></div>
+
+<p>でも， <em>npm</em> は <em>packages.json</em> で管理するべきだと思うので <em>requirements.txt</em> は使わないかな．．
+これで <em>TypeScript</em> 使ってこうかな．</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

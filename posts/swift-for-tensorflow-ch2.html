@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Swift for TensorFlow を使って単純なパーセプトロン | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/swift-for-tensorflow-ch2.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Swift for TensorFlow を使って、 AND, OR, NAND, XOR を実装してみる。">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Swift for TensorFlow を使って単純なパーセプトロン
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2018-05-31T23:55:31+09:00">
+        <i class="fa fa-clock-o"></i>
+        Thu 31 May 2018
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/swift.html">swift</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/swift-tensorflow.html">#swift tensorflow</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <p>Swift for TensorFlow を使って、 <code>AND</code>, <code>OR</code>, <code>NAND</code>, <code>XOR</code> を実装してみる。</p>
+<p><a href="https://www.oreilly.co.jp/books/9784873117584/">ゼロから作るDeep Learning</a> の第2章のサンプルコードを Swift for TensorFlow で書いてみただけです。</p>
+<h2>AND</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nf">AND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="nb">Double</span><span class="p">]])</span> <span class="p">-&gt;</span> <span class="p">[</span><span class="nb">Double</span><span class="p">]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nv">shape</span> <span class="p">=</span> <span class="n">TensorShape</span><span class="p">([</span><span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="bp">count</span><span class="p">),</span> <span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="bp">count</span><span class="p">)])</span>
+    <span class="kd">let</span> <span class="nv">x</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scalars</span><span class="p">:</span> <span class="n">a</span><span class="p">.</span><span class="bp">reduce</span><span class="p">([],</span> <span class="o">+</span><span class="p">))</span>
+    <span class="kd">let</span> <span class="nv">w</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">repeating</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nv">b</span> <span class="p">=</span> <span class="o">-</span><span class="mf">0.7</span>
+    <span class="kd">let</span> <span class="nv">y</span> <span class="p">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">).</span><span class="n">sum</span><span class="p">(</span><span class="n">squeezingAxes</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">).</span><span class="n">scalars</span><span class="p">.</span><span class="bp">map</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="mf">1.0</span> <span class="p">:</span> <span class="mf">0.0</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="bp">print</span><span class="p">(</span><span class="n">AND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span> <span class="c1">/// =&gt; [0.0, 0.0, 0.0, 1.0]</span>
+</code></pre></div>
+
+<h2>OR</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nf">OR</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="nb">Double</span><span class="p">]])</span> <span class="p">-&gt;</span> <span class="p">[</span><span class="nb">Double</span><span class="p">]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nv">shape</span> <span class="p">=</span> <span class="n">TensorShape</span><span class="p">([</span><span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="bp">count</span><span class="p">),</span> <span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="bp">count</span><span class="p">)])</span>
+    <span class="kd">let</span> <span class="nv">x</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scalars</span><span class="p">:</span> <span class="n">a</span><span class="p">.</span><span class="bp">reduce</span><span class="p">([],</span> <span class="o">+</span><span class="p">))</span>
+    <span class="kd">let</span> <span class="nv">w</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">repeating</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nv">b</span> <span class="p">=</span> <span class="o">-</span><span class="mf">0.2</span>
+    <span class="kd">let</span> <span class="nv">y</span> <span class="p">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">).</span><span class="n">sum</span><span class="p">(</span><span class="n">squeezingAxes</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">).</span><span class="n">scalars</span><span class="p">.</span><span class="bp">map</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="mf">1.0</span> <span class="p">:</span> <span class="mf">0.0</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="bp">print</span><span class="p">(</span><span class="n">OR</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span> <span class="c1">/// =&gt; [0.0, 1.0, 1.0, 1.0]</span>
+</code></pre></div>
+
+<h2>NAND</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nf">NAND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="nb">Double</span><span class="p">]])</span> <span class="p">-&gt;</span> <span class="p">[</span><span class="nb">Double</span><span class="p">]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nv">shape</span> <span class="p">=</span> <span class="n">TensorShape</span><span class="p">([</span><span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="bp">count</span><span class="p">),</span> <span class="nb">Int32</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="bp">count</span><span class="p">)])</span>
+    <span class="kd">let</span> <span class="nv">x</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scalars</span><span class="p">:</span> <span class="n">a</span><span class="p">.</span><span class="bp">reduce</span><span class="p">([],</span> <span class="o">+</span><span class="p">))</span>
+    <span class="kd">let</span> <span class="nv">w</span> <span class="p">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span> <span class="n">repeating</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nv">b</span> <span class="p">=</span> <span class="mf">0.7</span>
+    <span class="kd">let</span> <span class="nv">y</span> <span class="p">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">).</span><span class="n">sum</span><span class="p">(</span><span class="n">squeezingAxes</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">).</span><span class="n">scalars</span><span class="p">.</span><span class="bp">map</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="mf">1.0</span> <span class="p">:</span> <span class="mf">0.0</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="bp">print</span><span class="p">(</span><span class="n">NAND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span> <span class="c1">/// =&gt; [1.0, 1.0, 1.0, 0.0]</span>
+</code></pre></div>
+
+<h2>XOR</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nf">XOR</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="nb">Double</span><span class="p">]])</span> <span class="p">-&gt;</span> <span class="p">[</span><span class="nb">Double</span><span class="p">]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nv">s1</span> <span class="p">=</span> <span class="n">NAND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nv">s2</span> <span class="p">=</span> <span class="n">OR</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AND</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">zip</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">).</span><span class="bp">map</span> <span class="p">{</span> <span class="p">[</span><span class="nv">$0</span><span class="p">,</span> <span class="nv">$1</span><span class="p">]</span> <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="bp">print</span><span class="p">(</span><span class="n">XOR</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span> <span class="c1">/// =&gt; [0.0, 1.0, 1.0, 0.0]</span>
+</code></pre></div>
+
+<p>とりあえず出力結果があってたので大丈夫そう。
+何か間違ってたらごめんなさい🙇‍</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
