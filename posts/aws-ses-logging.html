@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>AWS SES ログを S3 に保存する | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/aws-ses-logging.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="AWS SES のログを S3 に保存する方法を Terraform で構築したのでメモ。">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>AWS SES ログを S3 に保存する
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2023-09-18T01:43:07+09:00">
+        <i class="fa fa-clock-o"></i>
+        Mon 18 September 2023
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/aws.html">aws</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/aws.html">#aws</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>AWS SES のログを S3 に保存する方法を Terraform で構築したのでメモ。</p>
+<h2>Terraform による構築</h2>
+<h3>SES の設定</h3>
+<p>SES にドメインの登録を行うのと送信アドレスを登録する。
+ログを残す場合、 <code>aws_ses_configuration_set</code> を設定することでいくつかログの送信先が設定できる。</p>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_configuration_set">aws_ses_configuration_set</a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_event_destination">aws_ses_event_destination</a></li>
+</ul>
+<p>今回は、Firehose を使って S3 に保存するようにした。
+ただ、AWS コンソール上だと configuration_set のデフォルト設定を行うことができるが、Terraform ではできない様子。
+仕方ないので、 terraform apply を行ったあとに、コンソール上で設定を行う必要がある。</p>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ses_domain_identity&quot;</span><span class="w"> </span><span class="nv">&quot;ses_domain&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">domain</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">var.ses_domain</span>
+<span class="w">  </span><span class="na">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ses_domain_dkim&quot;</span><span class="w"> </span><span class="nv">&quot;ses_domain_dkim&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">domain</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_ses_domain_identity.ses_domain.domain</span>
+<span class="w">  </span><span class="na">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ses_email_identity&quot;</span><span class="w"> </span><span class="nv">&quot;ses_email&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">email</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nv">var.ses_email</span>
+<span class="w">  </span><span class="na">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ses_configuration_set&quot;</span><span class="w"> </span><span class="nv">&quot;configuration_set&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${var.stack}-${var.env}-configuration-set&quot;</span>
+<span class="w">  </span><span class="na">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ses_event_destination&quot;</span><span class="w"> </span><span class="nv">&quot;firehose&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;event-destination-firehose&quot;</span>
+<span class="w">  </span><span class="na">configuration_set_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_ses_configuration_set.configuration_set.name</span>
+<span class="w">  </span><span class="na">enabled</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">  </span><span class="na">matching_types</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;bounce&quot;, &quot;complaint&quot;, &quot;delivery&quot;, &quot;send&quot;, &quot;reject&quot;, &quot;open&quot;, &quot;click&quot;</span><span class="p">]</span>
+
+<span class="w">  </span><span class="nb">kinesis_destination</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">stream_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_kinesis_firehose_delivery_stream.extended_s3_stream.arn</span>
+<span class="w">    </span><span class="na">role_arn</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.ses_role.arn</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="na">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>Provider の設定</h3>
+<p>SES を <code>us-east-1</code> で作成したので、 <code>us-east-1</code> に対しては <code>aws.east</code> という alias をつけている。</p>
+<div class="highlight"><pre><span></span><code><span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;aws&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">alias</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;east&quot;</span>
+<span class="w">  </span><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;us-east-1&quot;</span>
+
+<span class="w">  </span><span class="nb">default_tags</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">env</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="nv">var.env</span><span class="p">,</span>
+<span class="w">      </span><span class="na">stack</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="nv">var.stack</span><span class="p">,</span>
+<span class="w">      </span><span class="na">terraform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>S3 の設定</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_s3_bucket&quot;</span><span class="w"> </span><span class="nv">&quot;bucket&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">bucket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${var.stack}-${var.env}-email-logs&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>CloudWatch Logs の設定</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_log_group&quot;</span><span class="w"> </span><span class="nv">&quot;ses&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/aws/ses/${var.stack}-${var.env}&quot;</span>
+<span class="w">  </span><span class="na">retention_in_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">30</span>
+<span class="w">  </span><span class="na">provider</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>Firehose の設定</h3>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kinesis_firehose_delivery_stream">aws_kinesis_firehose_delivery_stream</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_kinesis_firehose_delivery_stream&quot;</span><span class="w"> </span><span class="nv">&quot;extended_s3_stream&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${var.stack}-${var.env}-kinesis-firehose-extended-s3-stream&quot;</span>
+<span class="w">  </span><span class="na">destination</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;extended_s3&quot;</span>
+<span class="w">  </span><span class="na">provider</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nv">aws.east</span>
+
+<span class="w">  </span><span class="nb">extended_s3_configuration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">role_arn</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.firehose_role.arn</span>
+<span class="w">    </span><span class="na">bucket_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_s3_bucket.bucket.arn</span>
+
+<span class="w">    </span><span class="na">buffering_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">64</span>
+
+<span class="w">    </span><span class="nb">cloudwatch_logging_options</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">enabled</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+<span class="w">      </span><span class="na">log_group_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_log_group.ses.name</span>
+<span class="w">      </span><span class="na">log_stream_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;extended_s3&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="na">prefix</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;data/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/&quot;</span>
+<span class="w">    </span><span class="na">error_output_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/!{firehose:error-output-type}/&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>IAM の設定</h3>
+<p>SES から Firehose にログを送るためには、SES から Firehose にアクセスできる IAM ロールが必要になる。
+また、Firehose から S3 にログを保存するためには、Firehose から S3 にアクセスできる IAM ロールが必要。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># SES</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_iam_role&quot;</span><span class="w"> </span><span class="nv">&quot;ses_role&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${var.stack}-${var.env}-ses-role&quot;</span>
+<span class="w">  </span><span class="na">assume_role_policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_iam_policy_document.ses_assume_policy_document.json</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_iam_role_policy&quot;</span><span class="w"> </span><span class="nv">&quot;ses_policy&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">role</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.ses_role.name</span>
+<span class="w">  </span><span class="na">policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_iam_policy_document.ses_policy_document.json</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_iam_policy_document&quot;</span><span class="w"> </span><span class="nv">&quot;ses_assume_policy_document&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">effect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span>
+
+<span class="w">    </span><span class="nb">principals</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">type</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Service&quot;</span>
+<span class="w">      </span><span class="na">identifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ses.amazonaws.com&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sts:AssumeRole&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_iam_policy_document&quot;</span><span class="w"> </span><span class="nv">&quot;ses_policy_document&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;firehose:PutRecordBatch&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">resources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Firehose</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_iam_role&quot;</span><span class="w"> </span><span class="nv">&quot;firehose_role&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${var.stack}-${var.env}-firehose-role&quot;</span>
+<span class="w">  </span><span class="na">assume_role_policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_iam_policy_document.firehose_assume_policy_document.json</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_iam_role_policy&quot;</span><span class="w"> </span><span class="nv">&quot;firehose_policy&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">role</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.firehose_role.name</span>
+<span class="w">  </span><span class="na">policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_iam_policy_document.firehose_policy_document.json</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_iam_policy_document&quot;</span><span class="w"> </span><span class="nv">&quot;firehose_assume_policy_document&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">effect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span>
+
+<span class="w">    </span><span class="nb">principals</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">type</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Service&quot;</span>
+<span class="w">      </span><span class="na">identifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;firehose.amazonaws.com&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sts:AssumeRole&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_iam_policy_document&quot;</span><span class="w"> </span><span class="nv">&quot;firehose_policy_document&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;s3:AbortMultipartUpload&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;s3:GetBucketLocation&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;s3:GetObject&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;s3:ListBucket&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;s3:ListBucketMultipartUploads&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;s3:PutObject&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">resources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;cloudwatch:*&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">resources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>さいごに</h2>
+<p>configuration set の設定は、 terraform apply を行ったあとに、コンソール上で設定を行う必要があるので以下の手順で設定する。</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/ja_jp/ses/latest/dg/managing-configuration-sets.html">https://docs.aws.amazon.com/ja_jp/ses/latest/dg/managing-configuration-sets.html</a></li>
+</ul>
+<p>delivery の場合、以下のようなログが S3 に保存される。（適当にマスクしてます）</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;eventType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Delivery&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;mail&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-10-08T00:26:46.312Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;noreply@example.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sourceArn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:ses:us-east-1:981185984049:identity/example.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sendingAccountId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;012345678901&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;messageId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0100018b0cadeaa8-7003157d-b5b6-4495-bd5b-31e9097a005f-000000&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;success@simulator.amazonses.com&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;headersTruncated&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;headers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MIME-Version&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Content-Type&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multipart/mixed; boundary=\&quot;delimiter\&quot;&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;From&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;noreply@example.com&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;commonHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;noreply@example.com&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;messageId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0100018b0cadeaa8-7003157d-b5b6-4495-bd5b-31e9097a005f-000000&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;ses:operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;SendRawEmail&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ses:configuration-set&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sample-dev-configuration-set&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ses:source-ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xxx.xxx.xxx.xxx&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ses:from-domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;example.com&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ses:caller-identity&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xxx&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ses:outgoing-ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xxx.xxx.xxx.xxx&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;delivery&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-10-08T00:26:46.710Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;processingTimeMillis&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">398</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;recipients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;success@simulator.amazonses.com&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;smtpResponse&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;250 2.6.0 Message received&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;reportingMTA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xxx.smtp-out.amazonses.com&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
