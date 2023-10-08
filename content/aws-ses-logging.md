@@ -1,6 +1,6 @@
 Title: AWS SES ログを S3 に保存する
-Date: 2023-09-18 01:43:07
-Modified: 2023-09-18 01:43:07
+Date: 2023-10-08 22:54:45
+Modified: 2023-10-08 22:54:45
 Category: aws
 Tags: aws
 Slug: aws-ses-logging
