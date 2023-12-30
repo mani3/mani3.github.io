@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>[iOS] watchOS の Complication に使えそうなやつ | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/ios-watchos-complication-image.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="watchOS の Complication の画像を動的に作りたいときに使います。">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>[iOS] watchOS の Complication に使えそうなやつ
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2017-10-19T21:23:17+09:00">
+        <i class="fa fa-clock-o"></i>
+        Thu 19 October 2017
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/development.html">development</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/ios.html">#ios</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <p>watchOS の Complication のコンテンツによって、画像のサイズはさまざまです。</p>
+<ul>
+<li>https://developer.apple.com/watchos/human-interface-guidelines/icons-and-images/complication-images/</li>
+</ul>
+<h2>フォント文字を画像にする</h2>
+<p>以下のようなメソッドを用意しておけば便利です。
+文字の色は白固定です。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">extension</span> <span class="bp">UIImage</span> <span class="p">{</span>
+
+    <span class="kd">class</span> <span class="nc">func</span> <span class="n">image</span><span class="p">(</span><span class="n">with</span> <span class="n">font</span><span class="p">:</span> <span class="bp">UIFont</span><span class="p">,</span> <span class="n">icon</span><span class="p">:</span> <span class="bp">NSString</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">CGSize</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="bp">UIImage</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nv">rect</span> <span class="p">=</span> <span class="n">CGRect</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">UIGraphicsBeginImageContext</span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nv">context</span> <span class="p">=</span> <span class="n">UIGraphicsGetCurrentContext</span><span class="p">()</span>
+        <span class="n">context</span><span class="p">?.</span><span class="n">translateBy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">size</span><span class="p">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">?.</span><span class="n">setFillColor</span><span class="p">(</span><span class="bp">UIColor</span><span class="p">.</span><span class="n">clear</span><span class="p">.</span><span class="n">cgColor</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">?.</span><span class="n">fill</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nv">paragraph</span> <span class="p">=</span> <span class="bp">NSMutableParagraphStyle</span><span class="p">()</span>
+        <span class="n">paragraph</span><span class="p">.</span><span class="n">alignment</span> <span class="p">=</span> <span class="p">.</span><span class="n">center</span>
+        <span class="kd">let</span> <span class="nv">attribute</span><span class="p">:</span> <span class="p">[</span><span class="n">NSAttributedStringKey</span><span class="p">:</span> <span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span>
+            <span class="n">NSAttributedStringKey</span><span class="p">.</span><span class="n">font</span><span class="p">:</span> <span class="n">font</span><span class="p">,</span>
+            <span class="n">NSAttributedStringKey</span><span class="p">.</span><span class="n">foregroundColor</span><span class="p">:</span> <span class="bp">UIColor</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+            <span class="n">NSAttributedStringKey</span><span class="p">.</span><span class="n">paragraphStyle</span><span class="p">:</span> <span class="n">paragraph</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="kd">let</span> <span class="nv">size</span> <span class="p">=</span> <span class="n">icon</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="n">withAttributes</span><span class="p">:</span> <span class="n">attribute</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nv">point</span> <span class="p">=</span> <span class="n">CGPoint</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">size</span><span class="p">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="o">-</span><span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">icon</span><span class="p">.</span><span class="n">draw</span><span class="p">(</span><span class="n">at</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="n">withAttributes</span><span class="p">:</span> <span class="n">attribute</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nv">image</span> <span class="p">=</span> <span class="n">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span><span class="o">!</span>
+        <span class="n">UIGraphicsEndImageContext</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">image</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>使い方</h2>
+<p><img alt="サンプル" src="../posts/images/watchos_complication.png"></p>
+<h2>ちなみに</h2>
+<p>Playground でフォントファイルを扱うときは、Playground の Resources というディレクトリにフォントファイルをおいて、Playground のはじめに以下を書くと外部のフォントファイルが扱えました。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span> <span class="nv">fontURL</span> <span class="p">=</span> <span class="n">Bundle</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">url</span><span class="p">(</span><span class="n">forResource</span><span class="p">:</span> <span class="s">&quot;MaterialIcons-Regular&quot;</span><span class="p">,</span> <span class="n">withExtension</span><span class="p">:</span> <span class="s">&quot;ttf&quot;</span><span class="p">)</span>
+<span class="n">CTFontManagerRegisterFontsForURL</span><span class="p">(</span><span class="n">fontURL</span><span class="p">!</span> <span class="k">as</span> <span class="n">CFURL</span><span class="p">,</span> <span class="n">CTFontManagerScope</span><span class="p">.</span><span class="n">process</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</code></pre></div><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

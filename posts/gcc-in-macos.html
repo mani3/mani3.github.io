@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>macOS の gcc環境準備 | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/gcc-in-macos.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="macOS で gcc 環境準備">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>macOS の gcc環境準備
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2020-11-03T13:18:54+09:00">
+        <i class="fa fa-clock-o"></i>
+        Tue 03 November 2020
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/gcc.html">gcc</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/gcc.html">#gcc</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>いろいろなところに書いてあるけど、macOS で gcc を使うと Xcode の clang が使われるので、gcc を使えるようにしたい。</p>
+<p>Apery をmacでビルドしたときに以下のエラーがでたのでその対応方法です。</p>
+<div class="highlight"><pre><span></span><code>❯<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/HiraokaTakuya/apery.git
+❯<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>apery/src
+❯<span class="w"> </span>make<span class="w"> </span>all
+
+...
+
+g++<span class="w"> </span>-std<span class="o">=</span>c++11<span class="w"> </span>-fno-exceptions<span class="w"> </span>-fno-rtti<span class="w"> </span>-Wextra<span class="w"> </span>-Ofast<span class="w"> </span>-MMD<span class="w"> </span>-MP<span class="w"> </span>-fopenmp<span class="w">  </span>-o<span class="w"> </span>../obj/main.o<span class="w"> </span>-c<span class="w"> </span>main.cpp
+clang:<span class="w"> </span>error:<span class="w"> </span>unsupported<span class="w"> </span>option<span class="w"> </span><span class="s1">&#39;-fopenmp&#39;</span>
+make:<span class="w"> </span>***<span class="w"> </span><span class="o">[</span>../obj/main.o<span class="o">]</span><span class="w"> </span>Error<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<h2>準備</h2>
+<ul>
+<li>macOS 10.15.7 </li>
+</ul>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>clang<span class="w"> </span>が使われる
+❯<span class="w"> </span>gcc<span class="w"> </span>-v
+Configured<span class="w"> </span>with:<span class="w"> </span>--prefix<span class="o">=</span>/Applications/Xcode.12.0.app/Contents/Developer/usr<span class="w"> </span>--with-gxx-include-dir<span class="o">=</span>/Applications/Xcode.12.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/4.2.1
+Apple<span class="w"> </span>clang<span class="w"> </span>version<span class="w"> </span><span class="m">12</span>.0.0<span class="w"> </span><span class="o">(</span>clang-1200.0.32.2<span class="o">)</span>
+Target:<span class="w"> </span>x86_64-apple-darwin19.6.0
+Thread<span class="w"> </span>model:<span class="w"> </span>posix
+InstalledDir:<span class="w"> </span>/Applications/Xcode.12.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+
+//<span class="w"> </span>gcc<span class="w"> </span>をインストール
+❯<span class="w"> </span>brew<span class="w"> </span>install<span class="w"> </span>gcc
+
+//<span class="w"> </span>gcc<span class="w"> </span>インストール後もかわらない
+❯<span class="w"> </span>gcc<span class="w"> </span>-v
+Configured<span class="w"> </span>with:<span class="w"> </span>--prefix<span class="o">=</span>/Applications/Xcode.12.0.app/Contents/Developer/usr<span class="w"> </span>--with-gxx-include-dir<span class="o">=</span>/Applications/Xcode.12.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/4.2.1
+Apple<span class="w"> </span>clang<span class="w"> </span>version<span class="w"> </span><span class="m">12</span>.0.0<span class="w"> </span><span class="o">(</span>clang-1200.0.32.2<span class="o">)</span>
+Target:<span class="w"> </span>x86_64-apple-darwin19.6.0
+Thread<span class="w"> </span>model:<span class="w"> </span>posix
+InstalledDir:<span class="w"> </span>/Applications/Xcode.12.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+
+
+//<span class="w"> </span>Homebrew<span class="w"> </span>からインストールした<span class="w"> </span>gcc
+❯<span class="w"> </span>ls<span class="w"> </span>/usr/local/bin/gcc*
+/usr/local/bin/gcc-10<span class="w">        </span>/usr/local/bin/gcc-ar-10<span class="w">     </span>/usr/local/bin/gcc-nm-10<span class="w">     </span>/usr/local/bin/gcc-ranlib-10
+
+//<span class="w"> </span>シンボリックリンク作成
+❯<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>/usr/local/bin/gcc-10<span class="w"> </span>/usr/local/bin/gcc
+❯<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>/usr/local/bin/g++-10<span class="w"> </span>/usr/local/bin/g++
+
+//<span class="w"> </span>別のターミナルを開いて実行
+❯<span class="w"> </span>gcc<span class="w"> </span>-v
+Using<span class="w"> </span>built-in<span class="w"> </span>specs.
+<span class="nv">COLLECT_GCC</span><span class="o">=</span>gcc
+<span class="nv">COLLECT_LTO_WRAPPER</span><span class="o">=</span>/usr/local/Cellar/gcc/10.2.0/libexec/gcc/x86_64-apple-darwin19/10.2.0/lto-wrapper
+Target:<span class="w"> </span>x86_64-apple-darwin19
+Configured<span class="w"> </span>with:<span class="w"> </span>../configure<span class="w"> </span>--build<span class="o">=</span>x86_64-apple-darwin19<span class="w"> </span>--prefix<span class="o">=</span>/usr/local/Cellar/gcc/10.2.0<span class="w"> </span>--libdir<span class="o">=</span>/usr/local/Cellar/gcc/10.2.0/lib/gcc/10<span class="w"> </span>--disable-nls<span class="w"> </span>--enable-checking<span class="o">=</span>release<span class="w"> </span>--enable-languages<span class="o">=</span>c,c++,objc,obj-c++,fortran<span class="w"> </span>--program-suffix<span class="o">=</span>-10<span class="w"> </span>--with-gmp<span class="o">=</span>/usr/local/opt/gmp<span class="w"> </span>--with-mpfr<span class="o">=</span>/usr/local/opt/mpfr<span class="w"> </span>--with-mpc<span class="o">=</span>/usr/local/opt/libmpc<span class="w"> </span>--with-isl<span class="o">=</span>/usr/local/opt/isl<span class="w"> </span>--with-system-zlib<span class="w"> </span>--with-pkgversion<span class="o">=</span><span class="s1">&#39;Homebrew GCC 10.2.0&#39;</span><span class="w"> </span>--with-bugurl<span class="o">=</span>https://github.com/Homebrew/homebrew-core/issues<span class="w"> </span>--disable-multilib<span class="w"> </span>--with-native-system-header-dir<span class="o">=</span>/usr/include<span class="w"> </span>--with-sysroot<span class="o">=</span>/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk<span class="w"> </span><span class="nv">SED</span><span class="o">=</span>/usr/bin/sed
+Thread<span class="w"> </span>model:<span class="w"> </span>posix
+Supported<span class="w"> </span>LTO<span class="w"> </span>compression<span class="w"> </span>algorithms:<span class="w"> </span>zlib
+gcc<span class="w"> </span>version<span class="w"> </span><span class="m">10</span>.2.0<span class="w"> </span><span class="o">(</span>Homebrew<span class="w"> </span>GCC<span class="w"> </span><span class="m">10</span>.2.0<span class="o">)</span>
+</code></pre></div>
+
+<h2>Apery をビルドする</h2>
+<div class="highlight"><pre><span></span><code>❯<span class="w"> </span>make<span class="w"> </span>clean<span class="w"> </span>bmi2
+</code></pre></div>
+
+<p>これでビルドはできるので、以下を参考に将棋ソフトなどに利用することができる。</p>
+<ul>
+<li>参考<ul>
+<li><a href="http://shogidokoro.starfree.jp/mac/compile.html">http://shogidokoro.starfree.jp/mac/compile.html</a></li>
+<li><a href="http://ringocatnote.com/entry/mac-elmo#Mac">http://ringocatnote.com/entry/mac-elmo#Mac</a></li>
+</ul>
+</li>
+</ul>
+<h2>ライブラリとしての利用</h2>
+<p>Apery を Static Library として利用するために書いておきます。</p>
+<div class="highlight"><pre><span></span><code>❯<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>..
+❯<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>shared/include
+
+❯<span class="w"> </span>cp<span class="w"> </span>src/*.hpp<span class="w"> </span>shared/include
+❯<span class="w"> </span>ar<span class="w"> </span>rcs<span class="w"> </span>shared/libapery.a<span class="w"> </span>obj/benchmark.o<span class="w"> </span>obj/bitboard.o<span class="w"> </span>obj/book.o<span class="w"> </span>obj/common.o<span class="w"> </span>obj/evalList.o<span class="w"> </span>obj/evaluate.o<span class="w"> </span>obj/generateMoves.o<span class="w"> </span>obj/hand.o<span class="w"> </span>obj/init.o<span class="w"> </span>obj/move.o<span class="w"> </span>obj/movePicker.o<span class="w"> </span>obj/mt64bit.o<span class="w"> </span>obj/pieceScore.o<span class="w"> </span>obj/position.o<span class="w"> </span>obj/search.o<span class="w"> </span>obj/search.o<span class="w"> </span>obj/square.o<span class="w"> </span>obj/thread.o<span class="w"> </span>obj/timeManager.o<span class="w"> </span>obj/tt.o<span class="w"> </span>obj/usi.o
+</code></pre></div>
+
+<p>一応、これで shared というディレクトリを参照してやれば静的ライブラリとして利用できる。
+Apery の実装などを参考に、ランダムな手を指すプログラムを書いてみる。</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;common.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bitboard.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;init.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;position.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;usi.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;thread.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;tt.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;search.hpp&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;move.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;generateMoves.hpp&gt;</span>
+
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">position_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">mt</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">().</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">());</span>
+
+<span class="w">  </span><span class="n">initTable</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Position</span><span class="o">::</span><span class="n">initZobrist</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Searcher</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Searcher</span><span class="p">);</span>
+<span class="w">  </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">th</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Thread</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Thread</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">thisptr</span><span class="p">));</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Position</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Position</span><span class="p">(</span><span class="n">DefaultStartPositionSFEN</span><span class="p">,</span><span class="w"> </span><span class="n">th</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">thisptr</span><span class="p">));</span>
+
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">position_num</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MaxPly</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span><span class="o">-&gt;</span><span class="n">toSFEN</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">StateInfo</span><span class="w"> </span><span class="n">state</span><span class="p">[</span><span class="n">MaxPly</span><span class="o">+</span><span class="mi">7</span><span class="p">];</span>
+<span class="w">    </span><span class="n">StateInfo</span><span class="o">*</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">MoveList</span><span class="o">&lt;</span><span class="n">Legal</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ml</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ml</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">moveDist</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">ml</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">      </span><span class="n">p</span><span class="o">-&gt;</span><span class="n">doMove</span><span class="p">((</span><span class="n">ml</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">moveDist</span><span class="p">(</span><span class="n">mt</span><span class="p">))</span><span class="o">-&gt;</span><span class="n">move</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">st</span><span class="o">++</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sfen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="o">-&gt;</span><span class="n">toSFEN</span><span class="p">();</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">istringstream</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">sfen</span><span class="p">);</span>
+<span class="w">    </span><span class="n">setPosition</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">ss</span><span class="p">);</span>
+<span class="w">    </span><span class="n">position_num</span><span class="o">++</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>これをどこか main.cpp として保存してビルドして実行すると適当な局面が生成されます。</p>
+<div class="highlight"><pre><span></span><code>❯<span class="w"> </span>g++-10<span class="w"> </span>main.cpp<span class="w"> </span>shared/libapery.a<span class="w"> </span>-lpthread<span class="w"> </span>-flto<span class="w"> </span>-std<span class="o">=</span>c++11<span class="w"> </span>-fno-exceptions<span class="w"> </span>-fno-rtti<span class="w"> </span>-Wextra<span class="w"> </span>-Ofast<span class="w"> </span>-MMD<span class="w"> </span>-MP<span class="w"> </span>-fopenmp<span class="w"> </span>-DNDEBUG<span class="w"> </span>-DHAVE_SSE4<span class="w"> </span>-DHAVE_SSE42<span class="w"> </span>-DHAVE_BMI2<span class="w"> </span>-msse4.2<span class="w"> </span>-mbmi2<span class="w"> </span>-DHAVE_AVX2<span class="w"> </span>-mavx2<span class="w"> </span>-o<span class="w"> </span>a.out<span class="w"> </span>-Lshared<span class="w"> </span>-Ishared/include<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>./a.out
+sfen<span class="w"> </span>lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL<span class="w"> </span>b<span class="w"> </span>-<span class="w"> </span><span class="m">1</span>
+sfen<span class="w"> </span>lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1BR6/LNSGKGSNL<span class="w"> </span>w<span class="w"> </span>-<span class="w"> </span><span class="m">1</span>
+sfen<span class="w"> </span>lnsgkgsnl/1r5b1/pppp1pppp/4p4/9/9/PPPPPPPPP/1BR6/LNSGKGSNL<span class="w"> </span>b<span class="w"> </span>-<span class="w"> </span><span class="m">1</span>
+...
+sfen<span class="w"> </span>1n4+N2/l2k5/2p1gP3/1sGpPg1pP/2PN2p2/1PsP2P1p/rpR1Sg1PL/LB6s/1+B2K1+nL1<span class="w"> </span>w<span class="w"> </span>3Pp<span class="w"> </span><span class="m">1</span>
+sfen<span class="w"> </span>1n4+N2/l2k5/2p1gP3/1sGpPg1pP/2PN2p2/1PsP2P1p/rpR1Sg1PL/LB4+n1s/1+B2K2L1<span class="w"> </span>b<span class="w"> </span>3Pp<span class="w"> </span><span class="m">1</span>
+sfen<span class="w"> </span>1n4+N2/l2k5/2p1gP3/1sGpPg1pP/2PN2p2/1PsP2P1p/rpR1Sg1PL/LB4+n1s/1+B1K3L1<span class="w"> </span>w<span class="w"> </span>3Pp<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<p>とりあえず、Apery の実装などがすこし理解できたので、独自の将棋ソフトを作ってみたい気持ち。</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

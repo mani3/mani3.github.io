@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Android アプリのバックアップ方法 | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/android-backup.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Pixel3 XL に機種変更して、Androidアプリのバックアップ方法を試した。">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Android アプリのバックアップ方法
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2019-03-01T23:32:59+09:00">
+        <i class="fa fa-clock-o"></i>
+        Fri 01 March 2019
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/android.html">android</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/android.html">#android</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>バックアップするAndroidアプリ</h2>
+<p>機種変更をする前に Justaway というアプリを使っていたのですが、Pixel3 にもインストールを行おうとしたらすでにストアでの公開は終了していました。。</p>
+<p><blockquote class="twitter-tweet"  align="center"><a href="https://twitter.com/justawayfactory/status/1029287452094001152">Tweet of justawayfactory/1029287452094001152</a></blockquote></p>
+<ul>
+<li>Justaway <ul>
+<li><a href="https://aska.hatenablog.com/entry/2016/09/07/022034">https://aska.hatenablog.com/entry/2016/09/07/022034</a></li>
+</ul>
+</li>
+</ul>
+<p>アプリ本体とアプリ内のデータのバックアップと取って新しいデバイスにインストール＆リストアします。</p>
+<h2>adb コマンドを使ってアプリをバックアップ</h2>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>インストールされているアプリを一覧する
+❯<span class="w"> </span>adb<span class="w"> </span>shell<span class="w"> </span>pm<span class="w"> </span>list<span class="w"> </span>packages
+...
+package:info.justaway
+...
+
+//<span class="w"> </span>apk<span class="w"> </span>ファイルの場所を確認する
+❯<span class="w"> </span>adb<span class="w"> </span>shell<span class="w"> </span>pm<span class="w"> </span>path<span class="w"> </span>info.justaway
+package:/data/app/info.justaway-2/base.apk
+
+//<span class="w"> </span>apkファイルを<span class="w"> </span>sdcard<span class="w"> </span>にコピーする
+❯<span class="w"> </span>adb<span class="w"> </span>shell<span class="w"> </span>cp<span class="w"> </span>/data/app/info.justaway-2/base.apk<span class="w"> </span>/sdcard/
+
+//<span class="w"> </span>apkファイルをローカルにコピーする
+❯<span class="w"> </span>adb<span class="w"> </span>pull<span class="w"> </span>/sdcard/base.apk<span class="w"> </span>./
+/sdcard/base.apk:<span class="w"> </span><span class="m">1</span><span class="w"> </span>file<span class="w"> </span>pulled.<span class="w"> </span><span class="m">17</span>.2<span class="w"> </span>MB/s<span class="w"> </span><span class="o">(</span><span class="m">2969358</span><span class="w"> </span>bytes<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.165s<span class="o">)</span>
+
+//<span class="w"> </span>デバイスをつなぎかえて新しいデバイスにアプリをインストールする
+❯<span class="w"> </span>adb<span class="w"> </span>install<span class="w"> </span>base.apk
+Success
+</code></pre></div>
+
+<h2>アプリ内のデータをバックアップ</h2>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>アプリ内<span class="o">(</span>info.justawayのみ<span class="o">)</span>のデータのバックアップ
+//<span class="w"> </span>以下を実行すると<span class="w"> </span>backup.ab<span class="w"> </span>というファイルを生成される
+❯<span class="w"> </span>adb<span class="w"> </span>backup<span class="w"> </span>-apk<span class="w"> </span>info.justaway
+*<span class="w"> </span>daemon<span class="w"> </span>not<span class="w"> </span>running<span class="p">;</span><span class="w"> </span>starting<span class="w"> </span>now<span class="w"> </span>at<span class="w"> </span>tcp:5037
+*<span class="w"> </span>daemon<span class="w"> </span>started<span class="w"> </span>successfully
+Now<span class="w"> </span>unlock<span class="w"> </span>your<span class="w"> </span>device<span class="w"> </span>and<span class="w"> </span>confirm<span class="w"> </span>the<span class="w"> </span>backup<span class="w"> </span>operation...
+</code></pre></div>
+
+<p>↑これを実行するとAndroidデバイス側でパスワードの入力が求められます。
+このパスワードはリストアするときに使用します。</p>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>アプリ内データのリストア
+❯<span class="w"> </span>adb<span class="w"> </span>restore<span class="w"> </span>backup.ab
+Now<span class="w"> </span>unlock<span class="w"> </span>your<span class="w"> </span>device<span class="w"> </span>and<span class="w"> </span>confirm<span class="w"> </span>the<span class="w"> </span>restore<span class="w"> </span>operation.
+</code></pre></div>
+
+<h2>参考</h2>
+<ul>
+<li>https://9to5google.com/2017/11/04/how-to-backup-restore-android-device-data-android-basics/</li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

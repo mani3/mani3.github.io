@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Unite Japan 2015 Memo | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/unite-japan-2015.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Unite Japan 2015 Memo
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2015-04-16T10:01:34+09:00">
+        <i class="fa fa-clock-o"></i>
+        Thu 16 April 2015
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/development.html">development</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/unity.html">#unity</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h1>Unite Japan 2015 day 1</h1>
+<p>2015/04/13  ホテル日航東京 1F</p>
+<h2>コロプラUnity 5プロジェクト ～白猫プロジェクトにおけるUnity 4からUnity 5への移行事例～</h2>
+<p>Room2 14:00~</p>
+<h3>コロプラ</h3>
+<h4>スリングショットブレイブズ？</h4>
+<ul>
+<li>Unity のバージョンを上げてしまうと・・</li>
+<li>パブリッシュしているタイトルは強制アップデートをできるだけ行わない運用</li>
+<li>Unityのバージョンをあげると複数AssetBundleを用意しないと聞けない
+-- チェックコストが上がる</li>
+</ul>
+<h4>Unity 5移行</h4>
+<ul>
+<li>エラーをとってく<ul>
+<li>小文字のアクセサが大文字になってたりする</li>
+</ul>
+</li>
+<li>API Updaterで基本的には移行できる</li>
+<li>仕様が変わってしまったAPIを修正<ul>
+<li>Cloth 頂点単位で移動距離を指定？</li>
+<li>TextureFormat</li>
+<li>AnimationStateMachine</li>
+<li>BB10Player</li>
+</ul>
+</li>
+<li>うまく動作していない箇所<ul>
+<li>白猫のタイトルのアニメーションが動かない<ul>
+<li>ルートモーションの仕組みが変更</li>
+<li>ApplyRootMotionのチェックを外す</li>
+</ul>
+</li>
+<li>アウトラインが膨らむ<ul>
+<li>COMPUTE_VIEW_NORMAL</li>
+</ul>
+</li>
+<li>CubeMapが反映されない<ul>
+<li>Unity5からTexGenがなくなった</li>
+<li>VertexShaderでCubeMapのUV計算を行う</li>
+</ul>
+</li>
+<li>RenderTextureでカメラ破棄しようとすると一緒になくなる<ul>
+<li>cameraからRenderTextureを外してからcameraをdestroy</li>
+</ul>
+</li>
+<li>厚みのない板にモーションをつけると落ちる<ul>
+<li>OpenGLES3.0とMetalのチェックを外すと治る？</li>
+</ul>
+</li>
+<li>DynamicBatchingでiOSが落ちる -&gt; 原因不明</li>
+<li>CharactorControlの挙動がわかっている<ul>
+<li>SphereCollider -&gt; CapsulColliderに変更</li>
+</ul>
+</li>
+<li>LightMapの動的切り替えができない<ul>
+<li>Unity4でたまたまできていたらしい</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>結局</h4>
+<ul>
+<li>αアニメーションが反映されない</li>
+<li>IL2CPPでバイナリサイズが減ったら<ul>
+<li>4.6.4のパッチ(2回)でil2cppのバイナリサイズが削減されてる</li>
+</ul>
+</li>
+</ul>
+<p>上記二つが解決したらUnity5でリリース予定</p>
+<h4>メモ</h4>
+<ul>
+<li>iOS 64bitサポートが6月からマストなのでアプリサイズ、Unityのアップデート(4.6.3移行)での確認必要</li>
+<li><a href="http://blogs.unity3d.com/2014/06/23/unity5-api-changes-automatic-script-updating/">Unity5移行このへんかな</a></li>
+</ul>
+<h2>Unity ユーザーエクスペリエンスチームの目標とビジョン</h2>
+<p>Room1 15:00~</p>
+<ul>
+<li>Unityのユーザエクスペリエンスをよくしてますよというお話</li>
+<li>Unity5からのAudioMixerのシンプルにしようとスライダーとか極力減らして、UIテストしたらオーディオエンジニアからは使いにくいとなったらしい</li>
+<li>UnityのUIのテスト実際の様子は見せれないけど下のような感じ<ul>
+<li><a href="https://www.youtube.com/watch?v=PF7EpEnglgk">Kids React to old Computer</a></li>
+<li>(動画自体はおもしろい)</li>
+</ul>
+</li>
+<li>Persona Project<ul>
+<li>いろいろなユーザタイプ(Unity歴何年とか)を作成すること</li>
+<li>#unityux DeveloperとしてUnity開発の様子を写真をあげてほしい</li>
+</ul>
+</li>
+</ul>
+<p>## スケルトンを用いた2Dキャラクターアニメーション開発 虎の巻</p>
+<p>Room1 17:00~</p>
+<ul>
+<li>スプライトシート、スプライトエディタ、ポビットポイントを使用したデモ<ul>
+<li>https://bitbucket.org/veli/2danimationtools</li>
+</ul>
+</li>
+</ul>
+<h2>Unity for New ニンテンドー3DS</h2>
+<ul>
+<li>Unity 5ベース</li>
+<li>New ニンテンドー3DSの登録ディベロッパーは利用可能</li>
+<li>既存のNintendo3DSは厳しい（アプリによっては動作するけど</li>
+<li>2015年夏にNintendoにβ版提出</li>
+<li>New 3DSはスペックはミドルレンジのスマートフォン(Nexus 5)くらい？</li>
+<li>New 3DSはil2cppのみ</li>
+</ul>
+<h4>ねじ巻きナイト2</h4>
+<ul>
+<li>New 3DS版に移行中</li>
+<li>3DSの仕様<ul>
+<li>ピクセルシェーダは固定（vertexシェーダは書ける）</li>
+<li>画面が3つある(上下画面と視差用の画面)</li>
+<li>タッチ画面</li>
+<li>400x240</li>
+</ul>
+</li>
+<li>3画面とも60fps、CPU使用率59%</li>
+<li>#if (UNITY_IOS || UNITY_N3DS)</li>
+<li>デモ</li>
+</ul>
+<h4>今後</h4>
+<ul>
+<li>3DSはフレームバッファを再利用できる<ul>
+<li>Screen.setReactive(false) or Screen.SetDirty()みたいなものをUnityで用意するか</li>
+</ul>
+</li>
+<li>3Dボリュームの扱い</li>
+</ul>
+<h2>Unity 5オーディオ新機能の真髄</h2>
+<p>Room1 19:00~</p>
+<ul>
+<li>AudioClipの改善</li>
+<li>AudioSourceの改善</li>
+<li>Audio Profiler, Audio Mixer追加</li>
+<li>AudioMixer上でホワイトノイズ作れて、組み合わせて風の音や金属音を作っていたのでUnity上でやれることが多くなった印象</li>
+<li>Native Audio Plugin SDK + example project</li>
+<li>https://bitbucket.org/Unity-Technologies/nativeaudioplugins</li>
+<li>Linear / non-linear music example project</li>
+<li>https://bitbucket.org/Unity-Technologies/audiodemos</li>
+<li>Presentation</li>
+<li>http://files.unity3d.com/janm/UniteAsia2015.pdf</li>
+</ul>
+<h1>Unite Japan 2015 day 2</h1>
+<p>2015/04/14  ホテル日航東京 1F</p>
+<h2>Unity パフォーマンス・チューニング</h2>
+<p>Room1 10:30~</p>
+<ul>
+<li>Profilierを使う<ul>
+<li>CPU, Memory使用率など</li>
+<li>各オブジェクトのメモリサイズまで確認できる</li>
+<li>オブジェクト間の参照も確認できる</li>
+</ul>
+</li>
+<li>GC<ul>
+<li>classをstructに置き換えるとGCする時間が短縮される</li>
+</ul>
+</li>
+<li>onGUIは使わない</li>
+<li>MonoBehaviorクラスは遅い-&gt; 必要ないところは使わない</li>
+<li>transformもたくさん使うと思い</li>
+</ul>
+<h3>まとめ</h3>
+<ul>
+<li>オブジェクトの再利用を検討する</li>
+<li>Profilerを使ってゲーム動作を見て最適な方法を選択する</li>
+</ul>
+<h2>Unityプロジェクトをひも解き把握するには</h2>
+<ul>
+<li>プロジェクトの中身を把握するにはどうすれば良いかという話</li>
+<li>プロジェクト-&gt;シーン-&gt;オブジェクト-&gt;コンポーネント</li>
+<li>実行時にシーンが持つコンポーネントを知る</li>
+<li>オブジェクトの役割と参照関係を知る</li>
+<li>オブジェクトが作られる条件を知る</li>
+<li>コンポーネントの動くタイミングを知る</li>
+<li>コンポーネントの接続方法を知る</li>
+<li>オブジェクトの動きを把握するとシーンの構造が分かる</li>
+<li>参照関係を閲覧できるEditor拡張のデモを行っていたが未公開</li>
+</ul>
+<h2>Unity GUI 開発テクニック指南</h2>
+<p>14:00~</p>
+<ul>
+<li>Unity Frame debugerを使えばドローコールの回数とか把握できる</li>
+<li>
+<p>Batching</p>
+</li>
+<li>
+<p>各コンポーネントにキャンバスをつける</p>
+</li>
+<li>Unity Sprite Packerを使う</li>
+<li>動かないオブジェクトはPexel Parfect指定</li>
+</ul>
+<h2>観客の皆さんも参加！Unityロードマップ・オープンディスカッション！</h2>
+<p>15:00~</p>
+<ul>
+<li>バグ修正が遅い -&gt; 週一回パッチリリースを行うようにした</li>
+<li>5.1 6月~</li>
+<li>5.2 9月~ β<ul>
+<li>il2cpp for Android</li>
+</ul>
+</li>
+<li>5.2以降はリリースサイクルを短くできたものをリリースするようにする</li>
+<li>Booはなくなる (Unity5 からdeprecated)</li>
+</ul>
+<h2>Unity新ネットワークシステムの未来</h2>
+<p>17:00~</p>
+<ul>
+<li>Raknet 5.1まで</li>
+<li>Multiplay Foundationを5.1から使って欲しい<ul>
+<li>UDPベース</li>
+<li>Low Level APIはC++</li>
+<li>High Level APIはC#</li>
+</ul>
+</li>
+</ul>
+<h2>Unityで音を制す</h2>
+<p>18:00~</p>
+<ul>
+<li>ADX2</li>
+<li>Sofdec2</li>
+<li>
+<p>ファイルマジックPro</p>
+</li>
+<li>
+<p>CRI ADXの導入事例</p>
+</li>
+<li>試用は無料</li>
+<li>初期費 35万円 + リリース初月 40万円 月額売上2700万以下なら翌月無料</li>
+</ul>
+<h2>Unityを利用したスマートフォン向けゲームアプリ開発へのアプローチ方法</h2>
+<p>19:00~</p>
+<ul>
+<li>
+<p>SummerTimeStudioの開発事例</p>
+</li>
+<li>
+<p>問題点疑問点は即解決</p>
+</li>
+<li>話した内容はメモで共有</li>
+<li>
+<p>コアメンバー少数決めて意思決定を早く</p>
+</li>
+<li>
+<p>STFramework</p>
+</li>
+<li>Android, iOSアプリ内課金共通化</li>
+<li>ローカライズ</li>
+<li>デバッグメニューの共通化</li>
+<li>独自のフレームワークを作るとUnityがアップデートされたときに対応必要</li>
+</ul>
+<h1>感想</h1>
+<ul>
+<li>講演自体はBlackセッションでも万人向け？の印象</li>
+<li>コアな質問等はUnity Japanのブースまたはワークショップでフォローアップしている感じ</li>
+<li>公開された資料を見たほうがわかりいいかも<ul>
+<li><a href="http://japan.unity3d.com/unite/unite2015/schedule">資料</a></li>
+</ul>
+</li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
