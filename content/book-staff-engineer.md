@@ -4,7 +4,7 @@ Modified: 2023-09-18 01:43:07
 Category: book
 Tags: book
 Slug: book-staff-engineer
-Summary:
+Summary: 『マネジメントを超えるリーダーシップスタッフエンジニア』の読書メモと感想をゆるくまとめた
 
 ## はじめに
 

@@ -4,7 +4,7 @@ Modified: 2021-10-13 22:10:39
 Category: book
 Tags: book
 Slug: book-orenaikokoronosodatekata
-Summary: 
+Summary: 「木村一基 折れない心の育て方」を読んだ感想と、失敗の受け止め方、集中力、人との比較、負けの受け入れ方など、棋士の視点から学ぶことが多いと感じた内容です
 
 ## はじめに
 
