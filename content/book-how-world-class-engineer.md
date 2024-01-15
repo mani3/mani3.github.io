@@ -1,4 +1,4 @@
-Title: を読んだ
+Title: 世界一流エンジニアの思考法を読んだ
 Date: 2024-01-15 00:03:58
 Modified: 2024-01-15 00:03:58
 Category: book
