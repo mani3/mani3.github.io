@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>EventBus で RDS のスナップショットの共有を検知する | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/aws-event-bus-modify-db-snapshot-attribute.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link rel="stylesheet" href="../theme/css/fonts.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="AWS EventBridge と CloudTrail を組み合わせて RDS スナップショット共有を監視する方法を紹介します。">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank" aria-label=""></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>EventBus で RDS のスナップショットの共有を検知する
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2023-12-30T22:58:20+09:00">
+        <i class="fa fa-clock-o"></i>
+        Sat 30 December 2023
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/aws.html">aws</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/aws.html">#aws</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>Amazon RDS には<a href="https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/USER_Events.Messages.html">イベントを検知する機能</a>がありますが、スナップショット共有のイベントは検知できないようです。</p>
+<p>スナップショット共有は <a href="https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/APIReference/API_ModifyDBSnapshotAttribute.html">ModifyDBSnapshotAttribute</a>  API が使用されます。 CloudTrail で API コールを検知することができるため、スナップショット共有を検知できます。
+また、アカウント間のイベントは EventBridge の <a href="https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-event-bus.html">EventBus</a> を利用することで別アカウントへイベント送信することができます。</p>
+<p>今回は、AWS アカウント間でスナップショット共有したときに自動でスナップショットをリストアする仕組みが欲しかったので、 EventBridge を使ってスナップショット共有を検知する仕組みを作ってみました。</p>
+<h2>RDS スナップショット共有の検知</h2>
+<p>CloudTrail の API コールを検知するための EventBridge のルールを作成します。
+イベントルールは、以下のように作成します。</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;aws.rds&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;detail-type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;AWS API Call via CloudTrail&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;eventSource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rds.amazonaws.com&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;eventName&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ModifyDBClusterSnapshotAttribute&quot;</span><span class="p">],</span>
+
+<span class="w">    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;valuesToAdd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;exists&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;responseElements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;dBClusterSnapshotIdentifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sample-cluster&quot;</span><span class="w"> </span><span class="p">}]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>いくつかの重要なポイントがあります。 CloudTrail で API コールを検知するときには、 <code>AWS API Call via CloudTrail</code> の detail-type を指定する必要があります。</p>
+<p><code>ModifyDBClusterSnapshotAttribute</code> だけでは、あらゆる変更によってイベントが発火してしまいます。
+<code>requestParameters</code> に <code>valuesToAdd</code> がある場合、共有先のアカウント ID が含まれています。共有を解除する場合は、 <code>valuesToRemove</code> が含まれますのでイベントは発火しません。</p>
+<p>また、<code>responseElements</code> に <code>dBClusterSnapshotIdentifier</code> にプレフィックスを指定して特定のスナップショットのみイベントを発火するようにしています。</p>
+<h2>EventBus の作成</h2>
+<p>EventBridge を用いたイベントの送信には、まず EventBus の作成が必要です。
+共有先のアカウントで作成するリソースを Terraform で作成すると以下のようになります。</p>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_bus&quot;</span><span class="w"> </span><span class="nv">&quot;event_bus&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;rds-snapshot-share-event-bus&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_iam_policy_document&quot;</span><span class="w"> </span><span class="nv">&quot;policy&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">statement</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">sid</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OtherAccountAccess&quot;</span>
+<span class="w">    </span><span class="na">effect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span>
+<span class="w">    </span><span class="na">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;events:PutEvents&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">resources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="nv">aws_cloudwatch_event_bus.event_bus.arn</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]</span>
+
+<span class="w">    </span><span class="nb">principals</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;AWS&quot;</span>
+<span class="c1">      # 共有元の AWS アカウント ID</span>
+<span class="w">      </span><span class="na">identifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;123456789012&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_bus_policy&quot;</span><span class="w"> </span><span class="nv">&quot;event_bus&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">event_bus_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_event_bus.event_bus.name</span>
+<span class="w">  </span><span class="na">policy</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_iam_policy_document.policy.json</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_rule&quot;</span><span class="w"> </span><span class="nv">&quot;event_bus&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;rds-snapshot-share&quot;</span>
+<span class="w">  </span><span class="na">event_bus_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_event_bus.event_bus.name</span>
+
+<span class="w">  </span><span class="na">event_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">jsonencode</span><span class="p">({</span>
+<span class="w">    </span><span class="na">source</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;aws.rds&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="na">detail-type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;AWS API Call via CloudTrail&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nb">detail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">eventSource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rds.amazonaws.com&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="na">eventName</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ModifyDBClusterSnapshotAttribute&quot;</span><span class="p">]</span>
+
+<span class="w">      </span><span class="nb">requestParameters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="na">valuesToAdd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="na">exists</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="nb">responseElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="na">dBClusterSnapshotIdentifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="na">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sample-cluster&quot;</span><span class="w"> </span><span class="p">}]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_target&quot;</span><span class="w"> </span><span class="nv">&quot;event_bus&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">event_bus_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_event_bus.event_bus.name</span>
+<span class="w">  </span><span class="na">rule</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_event_rule.event_bus.name</span>
+<span class="w">  </span><span class="na">arn</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="err">&lt;共有されたスナップショットのリストア処理&gt;</span>
+<span class="w">  </span><span class="na">role_arn</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.event_bridge.arn</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>共有元の EventBridge の作成</h2>
+<p>共有元のアカウントでイベントを送信するためには、 EventBus の ARN を指定してルールを作成します。</p>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_rule&quot;</span><span class="w"> </span><span class="nv">&quot;share_snapshot&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;rds-modify-db-cluster-snapshot-attribute&quot;</span>
+
+<span class="w">  </span><span class="na">event_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">jsonencode</span><span class="p">({</span>
+<span class="w">    </span><span class="na">source</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;aws.rds&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="na">detail-type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;AWS API Call via CloudTrail&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nb">detail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">eventSource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rds.amazonaws.com&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="na">eventName</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ModifyDBClusterSnapshotAttribute&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="nb">requestParameters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="na">valuesToAdd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="na">exists</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="nb">responseElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="na">dBClusterSnapshotIdentifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="na">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sample-cluster&quot;</span><span class="w"> </span><span class="p">}]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_cloudwatch_event_target&quot;</span><span class="w"> </span><span class="nv">&quot;share_snapshot&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">rule</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_cloudwatch_event_rule.share_snapshot.name</span>
+<span class="w">  </span><span class="na">arn</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="err">&lt;共有先の</span><span class="w"> </span><span class="err">EventBus</span><span class="w"> </span><span class="err">の</span><span class="w"> </span><span class="err">ARN&gt;</span>
+<span class="w">  </span><span class="na">role_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_iam_role.event_bridge.arn</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>さいごに</h2>
+<p>AWS の EventBridge と CloudTrail を組み合わせることで、データベースのスナップショット共有を効率的に監視することが可能です。
+この機能を活用することで、スナップショットの共有を自動的に検知し、即時にリストアするシステムを構築できます。</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
