@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Pocket の代わりに Obsidian を使い始めた。 | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/obsidian-instead-of-pocket.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link rel="stylesheet" href="../theme/css/fonts.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="Pocket 終了に伴い、Obsidian Web Clipper を使って Web 記事を保存・要約・同期する">
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank" aria-label=""></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>Pocket の代わりに Obsidian を使い始めた。
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2025-06-14T13:13:35+09:00">
+        <i class="fa fa-clock-o"></i>
+        Sat 14 June 2025
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/diary.html">diary</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/obsidian-diary.html">#obsidian diary</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>Web クリップ用途で Pocket を使っていましたが、<a href="https://support.mozilla.org/ja/kb/Future-of-pocket">Pocket がサービス終了する</a>ことになったため、代わりに <a href="https://obsidian.md/clipper">Obsidian Web Clipper</a> を使い始めました。
+この記事では、その際の設定や使い方についてまとめておきます。Pocket からの移行については対象外で、<a href="https://www.wantedly.com/companies/wantedly/post_articles/978503">こちらの記事</a>が参考になります。</p>
+<h2>Obsidian Web Clipper の設定</h2>
+<p>Obsidian Web Clipper は、Web 記事やメタデータを Markdown 形式で Obsidian の Vault に保存するための <a href="https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf">ブラウザ拡張機能</a> です。保存だけでなく、<code>.md</code> ファイルのダウンロードも可能です。</p>
+<p>公式ドキュメントにはさまざまな機能が紹介されていますが、テンプレートとインタープリターを使うことで保存内容をカスタマイズできます。</p>
+<ul>
+<li>https://help.obsidian.md/web-clipper</li>
+</ul>
+<h3>テンプレート設定内容</h3>
+<p>テンプレートは、クリップ時にプロパティや Markdown の内容をカスタマイズするためのものです。</p>
+<p>以下のようなプロパティを設定してます。</p>
+<h4>ノート名:</h4>
+<p><code>{{date|date:"YYYY-MM-DD"}}_{{title}}</code></p>
+<h4>プロパティ:</h4>
+<table>
+<thead>
+<tr>
+<th>プロパティ</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>{{title}}</code></td>
+</tr>
+<tr>
+<td>source</td>
+<td><code>{{url}}</code></td>
+</tr>
+<tr>
+<td>author</td>
+<td><code>{{author\|split:", "\|wikilink\|join}}</code></td>
+</tr>
+<tr>
+<td>published</td>
+<td><code>{{published}}</code></td>
+</tr>
+<tr>
+<td>created</td>
+<td><code>{{date}}</code></td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>{{description}}</code></td>
+</tr>
+<tr>
+<td>tags</td>
+<td><code>webclip, unread</code></td>
+</tr>
+<tr>
+<td>word</td>
+<td><code>{{words}}</code></td>
+</tr>
+<tr>
+<td>coverImageUrl</td>
+<td><code>{{image}}</code></td>
+</tr>
+</tbody>
+</table>
+<h4>ノートの内容:</h4>
+<p><code>{{content}}</code></p>
+<h3>インタープリター設定内容</h3>
+<p>インタープリターを使うと、クリップする際に Markdown の内容をさらにカスタマイズできます。
+LLM の外部プロバイダを設定すると、記事の要約やキーワード抽出も可能です。</p>
+<p>私の場合、英語の記事をクリップする際に要点を把握するため、インタープリターを設定しています。
+すべての記事を要約すると API の制限に引っかかるため、要約用テンプレートと非要約テンプレートを使い分けています。
+以下は、Gemini API を使って要約するテンプレートの一例です。</p>
+<ul>
+<li>ノートの内容:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>{{&quot;以下の記事を日本語で要約してください。出力形式はMarkdownで、見出し2（## 要約）、見出し3（### 主なポイント・### コメント）を使い、本文は2レベルの箇条書きで記述してください。主なポイントでは要点を3～5個程度、簡潔にまとめてください。コメントでは重要な点や興味深い点を1～2文で述べてください。&quot;}}
+
+---
+
+{{content}}
+</code></pre></div>
+
+<h2>Obsidian の同期</h2>
+<p>他の端末とクリップ内容を同期するには、Obsidian Sync や iCloud などの同期サービスが必要です。
+私は現在、Google Drive を使って同期しています。</p>
+<p>Android では、特定フォルダを Obsidian の Vault として設定し、DriveSync を使って Google Drive と同期しています（Google Drive アプリ単体では不可）。</p>
+<p>また、Obsidian Web Clipper の設定は JSON 形式でエクスポートできるため、そのファイルも共有・同期して他の端末でも同じ設定を使っています。</p>
+<h2>Android 版 Obsidian Web Clipper の設定</h2>
+<p>Android 版の Chrome では Obsidian Web Clipper 拡張機能が使えません。Obsidian アプリ自体にも Web クリップ機能は見当たりません。</p>
+<p>そのため、Android では Firefox ブラウザに Obsidian Web Clipper 拡張をインストールし、Obsidian アプリと連携しています。</p>
+<h2>参考</h2>
+<ul>
+<li><a href="https://help.obsidian.md/web-clipper/interpreter">Interpret web pages</a></li>
+<li><a href="https://help.obsidian.md/web-clipper/variables">Variables</a></li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
