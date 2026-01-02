@@ -1,0 +1,25 @@
+@font-face {
+  font-family: "Rounded Mplus 1c";
+  font-weight: 400;
+  src: url(../fonts/MPLUSRounded1c-Regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Rounded Mplus 1c";
+  font-weight: 500;
+  src: url(../fonts/MPLUSRounded1c-Medium.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Rounded Mplus 1c";
+  font-weight: 600;
+  src: url(../fonts/MPLUSRounded1c-Bold.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Rounded Mplus 1c";
+  font-weight: 900;
+  src: url(../fonts/MPLUSRounded1c-Black.ttf) format("truetype");
+}
+@font-face {
+  font-family: "MahoPreGreeks";
+  font-weight: 400;
+  src: url("../fonts/MahoPreGreeks Regular.ttf") format("truetype");
+}
