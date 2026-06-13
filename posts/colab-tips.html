@@ -31,6 +31,10 @@
 
 
 <meta name="description" content="Google Colab 上で実行している際のあったら便利なコマンド">
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
 <script>
   (function(i, s, o, g, r, a, m) {
     i['GoogleAnalyticsObject'] = r;
@@ -90,7 +94,7 @@
   <div class="content">
     <h2>はじめに</h2>
 <p>最近、 Google Colab を使って強化学習を試しています。
-Colab を使う中でちょっと便利なコマンドをメモしておきます。</p>
+Colab を使う中でちょっと便利なコマンドを備忘録として残しておきます。</p>
 <h2>GPU の使用率の確認</h2>
 <div class="highlight"><pre><span></span><code>/content#<span class="w"> </span>nvidia-smi<span class="w"> </span>dmon<span class="w"> </span>-s<span class="w"> </span>u<span class="w"> </span>-d<span class="w"> </span><span class="m">1</span>
 <span class="c1"># gpu     sm    mem    enc    dec    jpg    ofa </span>

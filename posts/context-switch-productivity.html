@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>コンテキストスイッチによる生産性低下を少し緩和したい | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/context-switch-productivity.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link rel="stylesheet" href="../theme/css/fonts.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="EM として注意残余と拡張された心の理論から、コンテキストスイッチの心理的負担を外部化で緩和するアイデアの話。">
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank" aria-label=""></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>コンテキストスイッチによる生産性低下を少し緩和したい
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2026-06-13T12:00:00+09:00">
+        <i class="fa fa-clock-o"></i>
+        土 13 6月 2026
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/diary.html">diary</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/diary.html">#diary</a>,         <a href="../tag/productivity.html">#productivity</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>EM としての私の仕事は大きく3つの領域に分かれる。</p>
+<ul>
+<li>ピープルマネジメント</li>
+<li>プロジェクトマネジメント</li>
+<li>ディスカバリー（課題発見・検討）</li>
+</ul>
+<p>どれも別の脳の使い方を要求する。採用のカジュアル面談・面接をやった途端、ごっそりリソースが持っていかれる感覚がある。面接後にコードレビューや設計の検討をしようとしても、全然別の話が頭に残っていて切り替えに時間がかかる。</p>
+<p>このコンテキストスイッチの心理的負担も含めて少しでも楽にしたい。その考え方と、現在試していることを書いておく。</p>
+<h2>なぜスイッチは重いのか：注意残余（Attention Residue）</h2>
+<p>Sophie Leroy（2009）の研究によると、タスクを切り替えたとき、前のタスクへの注意が完全には消えず残り続ける現象があることがわかっている。これを「注意残余（Attention Residue）」という。</p>
+<p>典型的な例として自分が感じるのは、「バックログにタスクを積まないといけない」と思った瞬間に 1on1 が始まるケース。面談中もそのタスクのことが頭の隅にこびりついて、相手の話に集中できていない状態になる。切り替えたつもりでも、切り替えられていない。</p>
+<p>注意残余が生まれる一因は「忘れてしまうかもしれない」という不安にある。脳がタスクを手放せないのは、手放したら戻れなくなるからだ。</p>
+<h2>解決の方向性：拡張された心</h2>
+<p>Andy Clark と David Chalmers が 1998 年に提唱した「拡張された心（The Extended Mind）」という哲学的概念がある。ノートやツールを使って思考を外部化すると、それは単なるメモではなく認知プロセスの一部として機能する、という考え方だ。脳とツールが密に連携することで、ひとつの認知システムを形成する。</p>
+<p>この概念を最初に聞いたとき、スケジュール帳やメモ帳のことかと思った。書くことで記憶に残りやすい、という話かと。でもそうではなかった。重要なのはシステムをどれだけ<strong>信頼</strong>して頼れるか、だと理解した。「心の拡張」というより「信頼の委譲」の方が自分には近い。</p>
+<p>信頼できる外部システムに書き出すことで、脳はその情報を手放せる。注意残余の根っこにある不安（忘れてしまうかもしれない）ごと、外部システムに委ねることができる。これが、コンテキストスイッチのコストを下げる方向性だと考えている。</p>
+<h2>2つの概念の関係</h2>
+<pre class="mermaid">
+flowchart LR
+    trigger([コンテキストスイッチ発生])
+
+    trigger --> no_ext[脳内で抱え込んだまま\n次のタスクへ移行]
+    trigger --> ext[外部システムに書き出してから\n次のタスクへ移行]
+
+    no_ext --> anxiety["「忘れてしまうかもしれない」\n不安が残る"]
+    ext --> trust["「書いてある」という確信\n拡張された心"]
+
+    anxiety --> residue[注意残余 Attention Residue\n前タスクへの注意が残存し続ける]
+    trust --> release[脳がタスクを手放せる\n気持ちよく忘れる]
+
+    residue --> bad[次タスクの\nパフォーマンス低下・心理的負担]
+    release --> good[次タスクへの\n完全集中・心理的負担軽減]
+
+    style no_ext  fill:#e03131,color:#fff,stroke:none
+    style anxiety fill:#e03131,color:#fff,stroke:none
+    style residue fill:#c92a2a,color:#fff,stroke:none
+    style bad     fill:#c92a2a,color:#fff,stroke:none
+
+    style ext     fill:#1971c2,color:#fff,stroke:none
+    style trust   fill:#1971c2,color:#fff,stroke:none
+    style release fill:#0c8599,color:#fff,stroke:none
+    style good    fill:#0c8599,color:#fff,stroke:none
+</pre>
+
+<h2>自分がやっていること（試行中）</h2>
+<p>現在、ピープルマネジメントの情報を外部化している。ツールの詳細は別記事に書くが、ここでは何を外部化していて、なぜそのツールを信頼できるようになったかを書く。</p>
+<h3>なぜピープルマネジメントから始めたか</h3>
+<p>扱う情報の量と複雑さが、自分の頭のキャパシティを一番超えているからだ。</p>
+<p>6人のメンバーに対して期初にミッションを設定する。一人あたり4つなら合計24のミッション項目がある。さらに各メンバーの現在の困りごと・ミッションの進捗・将来やりたいこと・直近の 1on1 での経緯——これらをメンバーごとに全て頭に入れたまま面談をするのは現実的に無理である。</p>
+<p>加えて、連続 1on1 の問題があり、メンバー A の面談が終わって即メンバー B の面談が始まると、A のコンテキストが残った状態で B の話を聞くことになる。これも注意残余の一種で、B に集中できていない自覚がある。</p>
+<h3>ツールを信頼できる理由</h3>
+<p>外部化しても、「後で見つけられないかもしれない」「整理されていなくて使えないかもしれない」という不安が残れば、脳は手放さないし、心理的負担も減らない。</p>
+<p>以前、Google Meet の議事メモを NotebookML に入れて、1on1 の内容を検索・抽出できるようにしたことがあった。ただこれは「自分が抽出して表現しないといけない」という状態で、次に何をすべきかは依然として自分が考える必要があり、信頼というより「便利なメモ帳」止まりで、手放す感覚には至らなかった。</p>
+<p>使っているツール（<a href="https://github.com/agenticnotetaking/arscontexta">arscontexta</a>）では、知識管理の C.O.D.E.（Capture（収集） → Organize（整理） → Distill（抽出） → Express（表現））に近い流れで情報が処理される。期初のミッション・週ごとのアップデート・1on1 のアウトプットを整理・抽出して、次のアクションとして表現してくれる。単なる保存ではなく、次に何をすべきかが出てくる。この「委譲できる感覚」が信頼の根拠になっている。</p>
+<p>1on1 の前に数分そのメンバーの状況を確認する儀式ができた。「詳細はツールにある」という安心感が、前の面談のコンテキストを引きずらないことにもつながっている。</p>
+<h2>さいごに</h2>
+<p>採用面接後に脳が疲れるのは変わらない。コンテキストスイッチをゼロにすることはできない。</p>
+<p>ただ、「手放せる」状態をどれだけ作れるかで切り替えのコストはだいぶ違う。外部化によって注意残余の不安ごと切り離せれば、今いる場所に集中できる。ピープルマネジメントで実感できているので、次の領域でも試していきたい。</p>
+<p>最近、忘れることの大切さをよく考える。アンラーニングの文脈でもそうだし、そもそも人間の脳は忘れるようにできていて、それ自体は欠陥ではないと思う。パートナーが言ったことを忘れると大変なことになるが。仕事の文脈では「忘れても良い」と思える環境が、生産性だけでなく普段の生活を少し豊かにする気がしている。</p>
+<hr>
+<h2>参考</h2>
+<ul>
+<li><a href="https://ja.wikipedia.org/w/index.php?title=%E6%8B%A1%E5%BC%B5%E3%81%95%E3%82%8C%E3%81%9F%E5%BF%83&amp;oldid=109028461">拡張された心 - Wikipedia</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Attention_management">Attention management - Wikipedia</a></li>
+</ul><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

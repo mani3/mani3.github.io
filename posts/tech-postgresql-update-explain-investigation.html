@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags always come first -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>PostgreSQL をアップデート後にクエリが急に遅くなったときの調査手順 | Lavieleaf
+</title>
+  <link rel="canonical" href="../posts/tech-postgresql-update-explain-investigation.html">
+
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/all.rss.xml" title="Full RSS Feed">
+  <link rel="alternate" type="application/rss+xml" href="https://mani3.github.io/feeds/category.slug.rss.xml" title="Categories RSS Feed">
+
+
+  <link rel="stylesheet" href="../theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../theme/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../theme/css/pygments/paraiso-dark.min.css">
+  <link rel="stylesheet" href="../theme/css/style.css">
+  <link rel="stylesheet" href="../theme/css/fonts.css">
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet" />
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9947041075020516",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<meta name="description" content="データベースのアップデート前後で特定のクエリだけ実行が遅くなった時にどう調べたらいいのかわからなかったので調査手順を備忘録として残しておく。">
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    a.async = 1;
+    a.src = g;
+    m = s.getElementsByTagName(o)[0];
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-26392156-5', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1 class="title"><a href="..">Lavieleaf</a></h1>
+          <p class="text-muted">おもったことをなんでも書くことろ</p>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="fa fa-github" href="https://github.com/mani3" target="_blank" aria-label=""></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>PostgreSQL をアップデート後にクエリが急に遅くなったときの調査手順
+</h1>
+      <hr>
+<article class="article">
+  <header>
+    <ul class="list-inline">
+      <li class="list-inline-item text-muted" title="2026-01-25T09:28:04+09:00">
+        <i class="fa fa-clock-o"></i>
+        日 25 1月 2026
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="../category/tech.html">tech</a>
+      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-user-o"></i>
+        <a href="../author/mani3.html">mani3</a>      </li>
+      <li class="list-inline-item">
+        <i class="fa fa-files-o"></i>
+        <a href="../tag/tech.html">#tech</a>      </li>
+    </ul>
+  </header>
+  <div class="content">
+    <h2>はじめに</h2>
+<p>仕事で PostgreSQL のアップデートを行った時に、古いバージョンで10分以内に終わっていたクエリが、新しいバージョン後に1時間経っても終わらない状況になった。</p>
+<p>アップデート前のスナップショットはあるが、古いバージョンの PostgreSQL を再度立ち上げて原因調査するのは大変だし、新しいバージョン側はクエリが終わらないので EXPLAIN (ANALYZE) を取ることもままならなかった。</p>
+<p>なので「新しいバージョンのみ」で、どこまで原因を絞れて、どう進めるのが良いかを残しておく。今回の事例については細かくは説明しない。
+（※ <a href="https://www.postgresql.org/docs/current/sql-explain.html">EXPLAIN (ANALYZE)</a> は計測の都合で通常実行より遅くなることがあるので、本番で雑に回すのは注意。）</p>
+<h2>最初やること</h2>
+<p>クエリの実行が遅い場合、大きく3つくらい考えられる</p>
+<ol>
+<li>実行計画作成が遅い</li>
+<li>クエリの実行が遅い</li>
+<li>結果の転送・ BI ツールが遅い</li>
+</ol>
+<h3>1. 実行計画作成が遅い</h3>
+<ul>
+<li>EXPLAIN (ANALYZE) は実行するが返ってこないケースはある。</li>
+<li>まずは 実行しない EXPLAIN で判定する</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="p">(</span><span class="n">COSTS</span><span class="p">,</span><span class="w"> </span><span class="k">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="n">SETTINGS</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="err">実行したいクエリ</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+
+<ul>
+<li>すぐ結果が返るなら「プランは作れている」＝ 実行フェーズ以降が怪しい</li>
+<li>逆に、これ自体が重いなら Planning が怪しい<ul>
+<li>複雑な条件式、巨大な IN、関数式、型変換の連鎖、やたら多い候補インデックスなど</li>
+</ul>
+</li>
+</ul>
+<h3>2. クエリの実行が遅い</h3>
+<p>クエリの実行が遅い場合、ざっくり「待ち」で分岐できる。
+- Lock 待ち
+- I/O 待ち（ディスク / temp）
+- CPU（= 待ちが見えない、ひたすら計算してる）</p>
+<h3>3. 結果の転送・ BI ツールが遅い</h3>
+<p>DB は返してるのに、 BI ツールの画面に出てこないもの。この場合、結果内容を小さくして同じ条件で試すことで問題を切り分けられる。</p>
+<ul>
+<li>例: 元クエリをサブクエリ化して LIMIT 1 だけ返す</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;</span><span class="err">元クエリ</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+
+<ul>
+<li>これが速いなら「結果表示（転送量 or クライアント側処理）」が疑わしい。</li>
+</ul>
+<h2>実行中の原因調査</h2>
+<p>「実行が遅い」場合、何から手をつけていけばいいかわからない。実行中に観測できるものをまとめて、原因のあたりをつける手順を考える。</p>
+<h3>PostgreSQL の統計情報を見る</h3>
+<ul>
+<li><a href="https://www.postgresql.jp/docs/17/monitoring-stats.html">pg_stat_activity</a><ul>
+<li>現在の実行中の SQL / 状態 / 待ち</li>
+</ul>
+</li>
+<li><a href="https://www.postgresql.jp/document/17/html/pgstatstatements.html">pg_stat_statements</a><ul>
+<li>実行した SQL の累積（回数、時間、I/O、temp など）</li>
+</ul>
+</li>
+<li><a href="https://www.postgresql.jp/docs/17/monitoring-stats.html#MONITORING-PG-STAT-DATABASE-VIEW">pg_stat_database</a><ul>
+<li>DB 全体の統計（temp など）</li>
+</ul>
+</li>
+</ul>
+<p>SQL の実行時間が長い場合に「何が起きているか」を観測したいなら、まず pg_stat_activity を見ると良い。</p>
+<h3>実行計画を確認する</h3>
+<div class="highlight"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="p">(</span><span class="n">COSTS</span><span class="p">,</span><span class="w"> </span><span class="k">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="n">SETTINGS</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="err">実行したいクエリ</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>見るポイント（雑に当たりをつける）：</p>
+<ul>
+<li>Seq Scan になってないか（または Index Scan だけど条件が緩くて 実質ほぼ全件）</li>
+<li>JOIN 順が不自然で、巨大側を先に読んでいないか</li>
+<li>推定行数（rows）が極端にズレてないか（= 統計不足・統計の質の問題かも）</li>
+<li>CTE が「何度も参照されてる」形になってないか<ul>
+<li>CTE Scan がループで回ってたり、巨大 CTE を何度も Materialize してる雰囲気があると危険</li>
+</ul>
+</li>
+</ul>
+<p>※ SETTINGS を付けておくと「そのプランに効いた設定」が出るので、アップデート前後差分の当たりを付けやすい。</p>
+<h3>実行中に何の待ちが発生しているか</h3>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">  </span><span class="n">pid</span><span class="p">,</span>
+<span class="w">  </span><span class="k">state</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wait_event_type</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wait_event</span><span class="p">,</span>
+<span class="w">  </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">query_start</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">running_for</span><span class="p">,</span>
+<span class="w">  </span><span class="k">left</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query_head</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_activity</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">datname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_database</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">state</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s1">&#39;idle&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">query_start</span><span class="p">;</span>
+</code></pre></div>
+
+<p>雑な読み方：</p>
+<ul>
+<li><code>wait_event_type=Lock</code> ならロック待ち（ブロッカーを探す）</li>
+<li><code>wait_event_type=IO</code> なら I/O 寄り（temp スピルやディスク読み書き）<ul>
+<li><code>wait_event_type=IO</code> / <code>wait_event=BuffileRead</code> が出たり消えたりする場合、 temp を 読み書きしながら処理してる。</li>
+</ul>
+</li>
+<li><code>wait_event_type=NULL</code> で state = 'active' なら、だいたい CPU で殴ってる（= 計算・結合・フィルタが重い）</li>
+</ul>
+<h3>temp スピルの発生の有無（pg_stat_database）</h3>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">  </span><span class="n">datname</span><span class="p">,</span>
+<span class="w">  </span><span class="n">temp_files</span><span class="p">,</span>
+<span class="w">  </span><span class="n">temp_bytes</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_database</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">datname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_database</span><span class="p">();</span>
+</code></pre></div>
+
+<ul>
+<li>temp_files / temp_bytes は統計リセット以降の累積なので、数秒おきに 2〜3 回見て増えているか を見る</li>
+<li>増えていれば temp I/O の可能性が高い</li>
+</ul>
+<h3>一時ファイル（temp）の犯人を特定する（pg_stat_statements）</h3>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">d</span><span class="p">.</span><span class="n">datname</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">database_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">r</span><span class="p">.</span><span class="n">rolname</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">user_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">p</span><span class="p">.</span><span class="n">queryid</span><span class="p">,</span>
+<span class="w">    </span><span class="n">p</span><span class="p">.</span><span class="n">calls</span><span class="p">,</span><span class="w"> </span><span class="c1">-- 実行回数</span>
+<span class="w">    </span><span class="c1">-- 一時ファイル関連 (ブロック数 * 8KB = サイズ)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">temp_blks_read</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8192</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">temp_read_mb</span><span class="p">,</span>
+<span class="w">    </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">temp_blks_written</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8192</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">temp_write_mb</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">-- 平均実行時間</span>
+<span class="w">    </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">total_exec_time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">calls</span><span class="p">)::</span><span class="nb">numeric</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">mean_time_ms</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">-- クエリの一部</span>
+<span class="w">    </span><span class="n">regexp_replace</span><span class="p">(</span><span class="k">left</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;[\r\n]+&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;g&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query_head</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_statements</span><span class="w"> </span><span class="n">p</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">pg_database</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">dbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">oid</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">pg_roles</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">userid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">oid</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">temp_blks_written</span><span class="w"> </span><span class="k">DESC</span><span class="w"> </span><span class="c1">-- 一時ファイルをたくさん書いた順</span>
+</code></pre></div>
+
+<ul>
+<li><code>pg_stat_statements</code> を使って、temp をたくさん吐いたクエリを上から見るのが早い。</li>
+<li>temp_blks_read / temp_blks_written は pg_stat_statements の列として存在する<ul>
+<li>https://www.postgresql.org/docs/current/pgstatstatements.html</li>
+</ul>
+</li>
+</ul>
+<h2>最後に</h2>
+<p>実際に仕事で起きたケースで行くと、CTE のクエリが Index Scan になっているが row がほぼ全件で、 CTE を繰り返し参照されていたため、実行が終わらないクエリになってしまっていた。同様のケースがあった場合には何かしら使えると思う。</p><script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</article>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+       <ul class="col-sm-6 list-inline">
+          <li class="list-inline-item"><a href="../authors.html">Authors</a></li>
+          <li class="list-inline-item"><a href="../archives.html">Archives</a></li>
+          <li class="list-inline-item"><a href="../categories.html">Categories</a></li>
+          <li class="list-inline-item"><a href="../tags.html">Tags</a></li>
+        </ul>
+        <p class="col-sm-6 text-sm-right text-muted">
+          Generated by <a href="https://github.com/getpelican/pelican" target="_blank">Pelican</a> / <a href="https://github.com/nairobilug/pelican-alchemy" target="_blank">&#x2728;</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
